@@ -92,6 +92,7 @@ main > section[data-page].on{display:block}
 .hero > img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .hero::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(20,28,24,.88) 0%,rgba(20,28,24,.4) 40%,rgba(20,28,24,0) 68%),linear-gradient(90deg,rgba(20,28,24,.45) 0%,rgba(20,28,24,0) 60%)}
 .hero .wrap{position:relative;z-index:1;width:100%;padding-block:calc(75px + 2rem) clamp(2.5rem,8vh,5.5rem)}
+.hero-wm{display:block;height:clamp(34px,4.2vw,50px);width:auto;max-width:100%;margin-bottom:clamp(1.1rem,2.5vw,1.8rem)}
 .hero h1{font-size:clamp(2.6rem,6.4vw,5.2rem);max-width:13ch;margin-block:0 .4rem}
 .hero h1 em{font-style:italic;color:var(--gold-soft)}
 .hero .lede{color:#d9ddd6}
@@ -373,6 +374,7 @@ html{scroll-behavior:smooth}
   <div class="hero">
     <img src="img/sunset.jpg" alt="The vineyard at dusk under a violet sky">
     <div class="wrap">
+      <img class="hero-wm" src="img/ksv-wordmark.png" alt="King Solomon's Vineyard">
       <h1>Estate wine from the slopes of the <em>Blue Mountain</em></h1>
       <div class="ctas">
         <a class="btn btn-gold" href="#club" data-scroll="homeClub">Join the Wine Club</a>
