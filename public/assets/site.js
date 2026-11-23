@@ -117,7 +117,7 @@ function tierHTML(t) {
 const popular = TIERS.find(t => t.flag) || TIERS[1];
 $$("[data-tiers]").forEach(el => {
   el.innerHTML = TIERS.map(tierHTML).join("");
-  el.insertAdjacentHTML("afterend", `<div class="tier-nav"><div class="tier-dots">${TIERS.map((t, i) => `<button type="button" aria-label="Show ${t.name}" data-i="${i}"></button>`).join("")}</div></div><a class="btn btn-gold tier-cta" href="${joinHref(popular.key)}" data-join="${popular.key}">Join ${popular.name}, our most popular</a>`);
+  el.insertAdjacentHTML("afterend", `<div class="tier-nav"><div class="tier-dots">${TIERS.map((t, i) => `<button type="button" aria-label="Show ${t.name}" data-i="${i}"></button>`).join("")}</div></div>`);
   const dots = [...el.nextElementSibling.querySelectorAll("button")];
   const upd = () => {
     const mid = el.scrollLeft + el.clientWidth / 2; let k = 0, best = 1e9;
