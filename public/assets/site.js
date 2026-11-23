@@ -196,8 +196,8 @@ if ($("#joinForm")) {
 if ($("#homeStrip")) {
   const strip = $("#homeStrip");
   strip.innerHTML = WINES.map(w => `<article class="wcard">
-    <a class="wimg" href="/wines#w-${w.id}"><img src="/img/bottle_${w.id}.png" alt="${w.name}" loading="lazy"></a>
-    <h3><a href="/wines#w-${w.id}">${w.name}</a></h3>
+    <button type="button" class="wimg zoomable" data-zoom="/img/bottle_${w.id}.png" aria-label="Enlarge ${w.name}"><img src="/img/bottle_${w.id}.png" alt="${w.name}" loading="lazy"></button>
+    <h3>${w.name}</h3>
     ${tags("Notes", w.notes.slice(0, 2), "", true)}${tags("Pairs with", w.pairs.slice(0, 2), " pair", true)}
     <div class="wfoot"><span class="pp">${money(w.list)} <b>${kp(w.mem)}</b></span>
     ${w.stock > 0 ? `<button class="btn btn-ink" type="button" data-add="${w.id}">Add to bag</button>` : `<span class="sold">Sold out</span>`}</div>
@@ -242,7 +242,7 @@ if ($("#homeStrip")) {
   upd(); addEventListener("resize", upd);
 }
 if ($("#homeGiftsGrid")) {
-  $("#homeGiftsGrid").innerHTML = SETS.map(b => `<article class="gift"><span class="savebadge">Save ${money(b.value - b.list)}</span><div class="gimg"><img src="/img/${b.img}" alt="${b.name} gift set" loading="lazy"></div>
+  $("#homeGiftsGrid").innerHTML = SETS.map(b => `<article class="gift"><span class="savebadge">Save ${money(b.value - b.list)}</span><button type="button" class="gimg zoomable" data-zoom="/img/${b.img}" aria-label="Enlarge ${b.name}"><img src="/img/${b.img}" alt="${b.name} gift set" loading="lazy"></button>
   <h3>${b.name}</h3>
   <div class="row"><div class="pr"><span class="now">${money(b.list)}</span><s>${money(b.value)}</s><b>${kp(b.mem)}</b></div>
   <button class="btn btn-gold" type="button" data-add="${b.id}">Add to bag</button></div></article>`).join("");
@@ -281,13 +281,13 @@ $$(".sel select").forEach(sel => {
 /* ---------- wines page ---------- */
 if ($("#ledger")) {
   const wineRow = w => `<article class="wine fade" id="w-${w.id}">
-  <div class="bottle"><img src="/img/bottle_${w.id}.png" alt="${w.name} bottle" loading="lazy"></div>
+  <button type="button" class="bottle zoomable" data-zoom="/img/bottle_${w.id}.png" aria-label="Enlarge ${w.name}"><img src="/img/bottle_${w.id}.png" alt="${w.name} bottle" loading="lazy"></button>
   <div class="info"><h2 class="wname">${w.name}</h2>${w.grape !== w.name ? `<p class="grape">${w.grape}</p>` : ""}<p class="desc">${w.desc}</p>
   ${tags("Notes", w.notes)}${tags("Pairs with", w.pairs, " pair")}</div>
   <div class="buy"><div class="prices"><div class="list">${money(w.list)}</div><div class="mem">${kp(w.mem)}</div></div>
   ${w.stock > 0 ? `<button class="btn btn-ink" type="button" data-add="${w.id}">Add to bag</button>` : `<span class="sold">Sold out. Members get the next release first.</span>`}</div></article>`;
   const setRow = b => `<article class="wine set fade" id="${b.id}">
-  <div class="bottle"><img src="/img/${b.img}" alt="${b.name} gift set" loading="lazy"></div>
+  <button type="button" class="bottle zoomable" data-zoom="/img/${b.img}" aria-label="Enlarge ${b.name}"><img src="/img/${b.img}" alt="${b.name} gift set" loading="lazy"></button>
   <div class="info"><h2 class="wname">${b.name}</h2><p class="grape">${b.for}</p><p class="desc">${b.desc}</p>
   ${tags("In the box", b.items)}</div>
   <div class="buy"><div class="prices"><span class="savebadge">Save ${money(b.value - b.list)}</span><div class="list"><s>${money(b.value)}</s> ${money(b.list)}</div><div class="mem">${kp(b.mem)}</div></div>
@@ -369,6 +369,20 @@ if ($("#eventForm")) $("#eventForm").addEventListener("submit", e => {
   document.addEventListener("click", e => { if (e.target.closest(".states-link")) { e.preventDefault(); dlg.showModal(); } });
   dlg.querySelector(".sd-x").onclick = () => dlg.close();
   dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
+})();
+
+/* ---------- click a bottle or gift box to see it larger ---------- */
+(() => {
+  const box = document.createElement("dialog"); box.className = "zoom-dlg"; box.setAttribute("aria-label", "Enlarged image");
+  box.innerHTML = '<button type="button" class="zx" aria-label="Close">&times;</button><img alt="">';
+  document.body.appendChild(box);
+  const img = box.querySelector("img");
+  document.addEventListener("click", e => {
+    const z = e.target.closest(".zoomable"); if (!z) return;
+    if (z.closest(".strip.dragging")) return;
+    img.src = z.dataset.zoom; img.alt = z.querySelector("img").alt; box.showModal();
+  });
+  box.addEventListener("click", () => box.close());
 })();
 
 /* ---------- mailing list (test only) ---------- */
