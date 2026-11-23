@@ -710,3 +710,10 @@ body[data-page="club"] .pagehead h1{text-shadow:0 2px 24px rgba(0,0,0,.55)}
 #joinTitle{font-size:clamp(1.8rem,3vw,2.3rem)}
 #joinForm .dp-head select{background:var(--stone);color:var(--ink);border:0;border-radius:8px;padding:.45rem .5rem;font:500 .9rem var(--f-body)}
 .fnote.is-err{font-size:.8rem}
+
+/* product view: background layer grows; bottle and name fly; the source card hides meanwhile */
+.pview{background:transparent}
+.pv-bg{position:fixed;inset:0;background:var(--paper);z-index:-1}
+.pview{isolation:isolate}
+.pv-source .zoomable img,.pv-source h3{visibility:hidden}
+.pv-body h2{width:fit-content}

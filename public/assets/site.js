@@ -122,14 +122,15 @@ document.addEventListener("click", e => {
     if (Math.abs(pt - pc) < .002) pc = pt; else { ticking = true; requestAnimationFrame(frame); }
     const p = pc, e = ease(p);
     const t = dock.getBoundingClientRect();
-    const x = lerp(s.x, t.left, e), y = lerp(s.y, t.top, e), k = lerp(1, t.width / s.w, e);
+    const over = -Math.min(0, scrollY);                 /* pulled past the top: move with the page */
+    const x = lerp(s.x, t.left, e), y = lerp(s.y, t.top, e) + over, k = lerp(1, t.width / s.w, e);
     marks.forEach(m => m.style.transform = `translate(${x}px,${y}px) scale(${k})`);
-    text.style.transform = `translate(${s.tx}px,${s.ty - p * 70}px)`;
+    text.style.transform = `translate(${s.tx}px,${s.ty - p * 70 + over}px)`;
     text.style.opacity = Math.max(0, 1 - p / .35);
     document.body.classList.toggle("logo-docked", p >= 1);
     hdr.classList.toggle("solid", p >= 1);          /* black bar fades in only once the logo has landed */
   }
-  addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(frame); } }, { passive: true });
+  addEventListener("scroll", () => { if (scrollY < 0) frame(); else if (!ticking) { ticking = true; requestAnimationFrame(frame); } }, { passive: true });
   addEventListener("resize", layout);
   if (photo.complete) layout(); else photo.addEventListener("load", layout);
   addEventListener("load", layout);
@@ -418,39 +419,59 @@ if ($("#eventForm")) $("#eventForm").addEventListener("submit", e => {
   const ov = document.createElement("div"); ov.className = "pview"; ov.hidden = true;
   ov.setAttribute("role", "dialog"); ov.setAttribute("aria-modal", "true");
   document.body.appendChild(ov);
-  let from = null;
+  let cur = null, busy = false;
+  const EASE = "cubic-bezier(.22,.8,.2,1)", MS = 560;
   const html = x => {
     const set = !!x.items;
     const img = set ? `/img/${x.img}` : `/img/bottle_${x.id}.png`;
-    const meta = set ? `<p class="pv-sub">${x.size} gift set</p>` : (x.grape !== x.name ? `<p class="pv-sub">${x.grape}</p>` : "");
+    const meta = !set && x.grape !== x.name ? `<p class="pv-sub">${x.grape}</p>` : "";
     const chips = set ? tags("In the box", x.items) : tags("Notes", x.notes) + tags("Pairs with", x.pairs, " pair");
     const price = set ? `<div class="list"><s>${money(x.value)}</s> ${money(x.list)}</div>` : `<div class="list">${money(x.list)}</div>`;
     const buy = (set || x.stock > 0) ? `<button class="btn btn-ink" type="button" data-add="${x.id}">Add to bag</button>` : `<span class="sold">Sold out</span>`;
-    return `<button type="button" class="pv-x" aria-label="Close">&times;</button>
+    return `<div class="pv-bg"></div><button type="button" class="pv-x" aria-label="Close">&times;</button>
       <div class="pv-in"><div class="pv-img"><img src="${img}" alt="${x.name}"></div>
       <div class="pv-body"><h2>${x.name}</h2>${meta}<p class="pv-desc">${x.desc}</p>${chips}
       <div class="pv-buy"><div class="prices">${price}<div class="mem">${kp(x.mem)}</div></div>${buy}</div></div></div>`;
   };
-  const rectClip = r => `inset(${r.top}px ${innerWidth - r.right}px ${innerHeight - r.bottom}px ${r.left}px round 4px)`;
-  function open(card, item) {
-    from = card; ov.innerHTML = html(item); ov.hidden = false; document.documentElement.classList.add("pv-lock");
-    const r = card.getBoundingClientRect();
-    ov.animate([{ clipPath: rectClip(r) }, { clipPath: "inset(0px 0px 0px 0px round 0px)" }], { duration: 520, easing: "cubic-bezier(.2,.75,.2,1)" });
-    ov.querySelector(".pv-in").animate([{ opacity: 0, transform: "translateY(14px)" }, { opacity: 1, transform: "none" }], { duration: 420, delay: 160, easing: "ease-out", fill: "backwards" });
-    ov.querySelector(".pv-x").focus();
+  const clip = r => `inset(${r.top}px ${innerWidth - r.right}px ${innerHeight - r.bottom}px ${r.left}px round 4px)`;
+  /* transform that puts element `to` exactly over rect `from` (top-left origin) */
+  const flip = (from, to) => `translate(${from.left - to.left}px,${from.top - to.top}px) scale(${from.width / to.width},${from.height / to.height})`;
+  const parts = card => ({ img: card.querySelector(".zoomable img"), name: card.querySelector("h3") });
+  const fadeIns = () => [...ov.querySelectorAll(".pv-sub,.pv-desc,.tags,.pv-buy,.pv-x")];
+
+  async function open(card, item) {
+    if (busy) return; busy = true; cur = card;
+    const src = parts(card), sImg = src.img.getBoundingClientRect(), sName = src.name.getBoundingClientRect(), sCard = card.getBoundingClientRect();
+    ov.innerHTML = html(item); ov.hidden = false; document.documentElement.classList.add("pv-lock");
+    const img = ov.querySelector(".pv-img img"), name = ov.querySelector(".pv-body h2");
+    try { await img.decode(); } catch (e) {}
+    const tImg = img.getBoundingClientRect(), tName = name.getBoundingClientRect();
+    card.classList.add("pv-source");
+    const o = { duration: MS, easing: EASE };
+    ov.querySelector(".pv-bg").animate([{ clipPath: clip(sCard) }, { clipPath: "inset(0px 0px 0px 0px round 0px)" }], o);
+    img.animate([{ transformOrigin: "0 0", transform: flip(sImg, tImg) }, { transformOrigin: "0 0", transform: "none" }], o);
+    name.animate([{ transformOrigin: "0 0", transform: flip(sName, tName) }, { transformOrigin: "0 0", transform: "none" }], o);
+    fadeIns().forEach((el, i) => el.animate([{ opacity: 0, transform: "translateY(10px)" }, { opacity: 1, transform: "none" }], { duration: 320, delay: MS * .55 + i * 35, easing: "ease-out", fill: "backwards" }));
+    setTimeout(() => { busy = false; ov.querySelector(".pv-x").focus({ preventScroll: true }); }, MS);
   }
   function close() {
-    if (ov.hidden) return;
-    const r = from.getBoundingClientRect();
-    ov.animate([{ clipPath: "inset(0px 0px 0px 0px round 0px)" }, { clipPath: rectClip(r) }], { duration: 380, easing: "cubic-bezier(.4,0,.2,1)" })
-      .onfinish = () => { ov.hidden = true; ov.innerHTML = ""; document.documentElement.classList.remove("pv-lock"); };
+    if (ov.hidden || busy || !cur) return; busy = true;
+    const src = parts(cur), sImg = src.img.getBoundingClientRect(), sName = src.name.getBoundingClientRect(), sCard = cur.getBoundingClientRect();
+    const img = ov.querySelector(".pv-img img"), name = ov.querySelector(".pv-body h2");
+    const tImg = img.getBoundingClientRect(), tName = name.getBoundingClientRect();
+    const o = { duration: MS * .8, easing: "cubic-bezier(.4,0,.2,1)", fill: "forwards" };
+    fadeIns().forEach(el => el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 160, fill: "forwards" }));
+    img.animate([{ transformOrigin: "0 0", transform: "none" }, { transformOrigin: "0 0", transform: flip(sImg, tImg) }], o);
+    name.animate([{ transformOrigin: "0 0", transform: "none" }, { transformOrigin: "0 0", transform: flip(sName, tName) }], o);
+    ov.querySelector(".pv-bg").animate([{ clipPath: "inset(0px 0px 0px 0px round 0px)" }, { clipPath: clip(sCard) }], o).onfinish = () => {
+      cur.classList.remove("pv-source"); ov.hidden = true; ov.innerHTML = ""; document.documentElement.classList.remove("pv-lock"); busy = false;
+    };
   }
   document.addEventListener("click", e => {
     const z = e.target.closest(".wcard .zoomable, .gift .zoomable"); if (!z) return;
     if (z.closest(".strip.dragging")) return;
     e.stopImmediatePropagation();
-    const card = z.closest(".wcard, .gift"), id = z.dataset.item;
-    const item = ITEMS.find(x => String(x.id) === id); if (item) open(card, item);
+    const item = ITEMS.find(x => String(x.id) === z.dataset.item); if (item) open(z.closest(".wcard, .gift"), item);
   }, true);
   ov.addEventListener("click", e => { if (e.target.closest(".pv-x")) close(); });
   document.addEventListener("keydown", e => { if (e.key === "Escape") close(); });
