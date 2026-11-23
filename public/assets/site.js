@@ -267,6 +267,14 @@ $("#bagBtn").onclick = () => openBag(true); $("#bagClose").onclick = () => openB
 document.addEventListener("keydown", e => { if (e.key === "Escape") { openBag(false); openMenu(false); } });
 renderBag();
 
+/* ---------- events inquiry (test only) ---------- */
+if ($("#eventForm")) $("#eventForm").addEventListener("submit", e => {
+  e.preventDefault();
+  const n = $("#eName").value.trim(), em = $("#eEmail").value.trim();
+  if (!n || !/^\S+@\S+\.\S+$/.test(em)) { $("#eErr").textContent = "Enter your name and a valid email."; return; }
+  $("#eventWrap").innerHTML = `<div class="ok"><p class="eyebrow">Test site</p><h3 style="margin-top:.4rem">Thank you, ${n.replace(/[<>&]/g, "")}.</h3><p style="margin-top:.6rem;color:var(--muted-dk)">On the live site this inquiry goes to the vineyard team, who reply within one business day. Nothing was sent.</p></div>`;
+});
+
 /* ---------- mailing list (test only) ---------- */
 const fForm = $("#footForm");
 if (fForm) fForm.addEventListener("submit", e => {
