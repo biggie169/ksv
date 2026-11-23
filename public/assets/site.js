@@ -1,6 +1,7 @@
 /* King Solomon's Vineyard: shared site script. Data comes from /assets/data.js (window.KSV), built from src/data.json. */
 (() => {
-const { wines: WINES, sets: SETS, tiers: TIERS, sweetness: SWEET } = window.KSV;
+const { wines: WINES, sets: SETS, tiers: TIERS } = window.KSV;
+const tags = (label, list, cls = "") => `<div class="tags"><span class="tl">${label}</span>${list.map(x => `<span class="tag${cls}">${x}</span>`).join("")}</div>`;
 const ITEMS = [...SETS, ...WINES];
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
 const money = n => "$" + (Number.isInteger(n) ? n : n.toFixed(2));
@@ -167,30 +168,29 @@ if ($("#calcN")) {
 if ($("#homeStrip")) {
   $("#homeStrip").innerHTML = [107195, 107194, 107190, 107188].map(id => {
     const w = WINES.find(x => x.id === id);
-    return `<a href="/wines"><img src="/img/bottle_${w.id}.png" alt="${w.name}" loading="lazy"><h3>${w.name}</h3><span class="p">${SWEET[w.sweet]} · ${money(w.list)} · <b>Members ${money(w.mem)}</b></span></a>`;
+    return `<a href="/wines"><img src="/img/bottle_${w.id}.png" alt="${w.name}" loading="lazy"><h3>${w.name}</h3><span class="p">${w.notes.slice(0, 2).join(" · ")}</span><span class="pp">${money(w.list)} <b>Members ${money(w.mem)}</b></span></a>`;
   }).join("");
 }
 if ($("#homeGiftsGrid")) {
   $("#homeGiftsGrid").innerHTML = SETS.map(b => `<article class="gift"><div class="gimg"><img src="/img/${b.img}" alt="${b.name} gift set" loading="lazy"></div>
   <p class="kicker">${b.size}</p><h3>${b.name}</h3><p class="for">${b.for}</p>
-  <div class="row"><div class="pr"><s>${money(b.value)}</s><span>${money(b.list)}</span><b><small>Member</small>${money(b.mem)}</b></div>
+  <div class="row"><div class="pr"><span class="now">${money(b.list)}</span><s>${money(b.value)}</s><b>Members ${money(b.mem)}</b></div>
   <button class="btn btn-gold" type="button" data-add="${b.id}">Add to bag</button></div></article>`).join("");
 }
 
 /* ---------- wines page ---------- */
 if ($("#ledger")) {
-  const scale = n => `<div class="scale" aria-hidden="true">${[1, 2, 3, 4].map(i => `<i class="${i <= n ? "on" : ""}"></i>`).join("")}</div>`;
   const wineRow = w => `<article class="wine fade" id="w-${w.id}">
   <div class="bottle"><img src="/img/bottle_${w.id}.png" alt="${w.name} bottle" loading="lazy"></div>
-  <div><h2 class="wname">${w.name}</h2>${w.grape !== w.name ? `<p class="grape">${w.grape}</p>` : ""}<p class="desc">${w.desc}</p><p class="pair">Pair with: ${w.pair}</p></div>
-  <div class="sweet"><span class="lbl">Sweetness</span>${scale(w.sweet)}<span class="val">${SWEET[w.sweet]}</span></div>
-  <div class="buy"><div class="prices"><div class="list">${money(w.list)} retail</div><div class="mem"><small>Member</small>${money(w.mem)}</div></div>
+  <div class="info"><h2 class="wname">${w.name}</h2>${w.grape !== w.name ? `<p class="grape">${w.grape}</p>` : ""}<p class="desc">${w.desc}</p>
+  ${tags("Notes", w.notes)}${tags("Pairs with", w.pairs, " pair")}</div>
+  <div class="buy"><div class="prices"><div class="list">${money(w.list)}</div><div class="mem">Members ${money(w.mem)}</div></div>
   ${w.stock > 0 ? `<button class="btn btn-ink" type="button" data-add="${w.id}">Add to bag</button>` : `<span class="sold">Sold out. Members get the next release first.</span>`}</div></article>`;
   const setRow = b => `<article class="wine set fade" id="${b.id}">
   <div class="bottle"><img src="/img/${b.img}" alt="${b.name} gift set" loading="lazy"></div>
-  <div><p class="kicker">${b.size} · Gift set</p><h2 class="wname">${b.name}</h2><p class="grape">${b.for}</p><p class="desc">${b.desc}</p></div>
-  <div class="sweet"><span class="lbl">In the box</span><ul class="box">${b.items.map(i => `<li>${i}</li>`).join("")}</ul></div>
-  <div class="buy"><div class="prices"><div class="list"><s>${money(b.value)}</s> ${money(b.list)}</div><div class="mem"><small>Member</small>${money(b.mem)}</div></div>
+  <div class="info"><p class="kicker">${b.size} · Gift set</p><h2 class="wname">${b.name}</h2><p class="grape">${b.for}</p><p class="desc">${b.desc}</p>
+  ${tags("In the box", b.items)}</div>
+  <div class="buy"><div class="prices"><div class="list"><s>${money(b.value)}</s> ${money(b.list)}</div><div class="mem">Members ${money(b.mem)}</div></div>
   <button class="btn btn-ink" type="button" data-add="${b.id}">Add to bag</button></div></article>`;
   const VARIETALS = ["Cabernet Franc", "Merlot", "Chambourcin", "Chardonnay", "Red blend", "White blend"];
   const shop = { f: ["red", "white", "sets"].includes(params.get("f")) ? params.get("f") : "all", v: VARIETALS.includes(params.get("v")) ? params.get("v") : "", s: "feat" };
