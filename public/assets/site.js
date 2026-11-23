@@ -1,7 +1,14 @@
 /* King Solomon's Vineyard: shared site script. Data comes from /assets/data.js (window.KSV), built from src/data.json. */
 (() => {
 const { wines: WINES, sets: SETS, tiers: TIERS } = window.KSV;
-const tags = (label, list, cls = "") => `<div class="tags"><span class="tl">${label}</span>${list.map(x => `<span class="tag${cls}">${x}</span>`).join("")}</div>`;
+const ICONS = {
+  "Notes": '<path d="M8 3h8l-.4 6.2a3.6 3.6 0 0 1-7.2 0L8 3zM12 12.8V20M8.5 20.5h7"/>',
+  "Pairs with": '<path d="M7 3v6.5a2 2 0 0 0 2 2V21M11 3v6.5a2 2 0 0 1-2 2M9 3v5.5M17 21V3c-2 1.6-3 4.2-3 7v3.5h3"/>',
+  "In the box": '<path d="M4 10h16v10H4zM3 7h18v3H3zM12 7v13M12 7c-1.6-3.2-5.5-3-5.2-.9C7 7.3 10 7 12 7zM12 7c1.6-3.2 5.5-3 5.2-.9C17 7.3 14 7 12 7z"/>'
+};
+const icon = label => ICONS[label] ? `<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">${ICONS[label]}</svg>` : "";
+/* chip row with an icon label; compact rows show only the icon (label kept for screen readers) */
+const tags = (label, list, cls = "", compact = false) => `<div class="tags${compact ? " compact" : ""}"><span class="tl">${icon(label)}<span class="lt">${label}</span></span>${list.map(x => `<span class="tag${cls}">${x}</span>`).join("")}</div>`;
 const ITEMS = [...SETS, ...WINES];
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
 const money = n => "$" + (Number.isInteger(n) ? n : n.toFixed(2));
@@ -170,12 +177,12 @@ if ($("#calcN")) {
 if ($("#homeStrip")) {
   $("#homeStrip").innerHTML = [107195, 107194, 107190, 107188].map(id => {
     const w = WINES.find(x => x.id === id);
-    return `<a href="/wines"><img src="/img/bottle_${w.id}.png" alt="${w.name}" loading="lazy"><h3>${w.name}</h3><span class="p">${w.notes.slice(0, 2).join(" · ")}</span><span class="pp">${money(w.list)} <b>Members ${money(w.mem)}</b></span></a>`;
+    return `<a href="/wines"><img src="/img/bottle_${w.id}.png" alt="${w.name}" loading="lazy"><h3>${w.name}</h3>${tags("Notes", w.notes.slice(0, 2), "", true)}${tags("Pairs with", w.pairs.slice(0, 2), " pair", true)}<span class="pp">${money(w.list)} <b>Members ${money(w.mem)}</b></span></a>`;
   }).join("");
 }
 if ($("#homeGiftsGrid")) {
   $("#homeGiftsGrid").innerHTML = SETS.map(b => `<article class="gift"><div class="gimg"><img src="/img/${b.img}" alt="${b.name} gift set" loading="lazy"></div>
-  <p class="kicker">${b.size}</p><h3>${b.name}</h3><p class="for">${b.for}</p>
+  <h3>${b.name}</h3><p class="for">${b.for}</p>
   <div class="row"><div class="pr"><span class="now">${money(b.list)}</span><s>${money(b.value)}</s><b>Members ${money(b.mem)}</b></div>
   <button class="btn btn-gold" type="button" data-add="${b.id}">Add to bag</button></div></article>`).join("");
 }
@@ -190,7 +197,7 @@ if ($("#ledger")) {
   ${w.stock > 0 ? `<button class="btn btn-ink" type="button" data-add="${w.id}">Add to bag</button>` : `<span class="sold">Sold out. Members get the next release first.</span>`}</div></article>`;
   const setRow = b => `<article class="wine set fade" id="${b.id}">
   <div class="bottle"><img src="/img/${b.img}" alt="${b.name} gift set" loading="lazy"></div>
-  <div class="info"><p class="kicker">${b.size} · Gift set</p><h2 class="wname">${b.name}</h2><p class="grape">${b.for}</p><p class="desc">${b.desc}</p>
+  <div class="info"><h2 class="wname">${b.name}</h2><p class="grape">${b.for}</p><p class="desc">${b.desc}</p>
   ${tags("In the box", b.items)}</div>
   <div class="buy"><div class="prices"><div class="list"><s>${money(b.value)}</s> ${money(b.list)}</div><div class="mem">Members ${money(b.mem)}</div></div>
   <button class="btn btn-ink" type="button" data-add="${b.id}">Add to bag</button></div></article>`;
