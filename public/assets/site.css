@@ -520,3 +520,12 @@ html,body{overflow-x:clip}
 .strip{margin-inline:calc(50% - 50vw);padding-left:max(var(--gut-l),calc((100vw - var(--wrap)) / 2 + var(--gut-l)));padding-right:max(var(--gut-r),calc((100vw - var(--wrap)) / 2 + var(--gut-r)));scroll-padding-inline:max(var(--gut-l),calc((100vw - var(--wrap)) / 2 + var(--gut-l)))}
 @media (min-width:901px){.wcard{flex:0 0 calc((min(100vw,var(--wrap)) - var(--gut-l) - var(--gut-r) - 2 * 1.25rem) / 3.15)}}
 .car-nav{display:none!important}
+
+/* heritage on the barrel room, light text */
+.heritage-band{position:relative;color:var(--on-ink);background:var(--ink) url("/img/barrels-wide.jpg") 30% 50%/cover no-repeat;isolation:isolate}
+.heritage-band::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(20,28,24,.35) 0%,rgba(20,28,24,.55) 45%,rgba(20,28,24,.82) 100%)}
+.heritage-band .copy p:not(.eyebrow){color:#d6dbd3}
+.heritage-band .eyebrow{color:var(--gold-soft)}
+.heritage-band .btn-line{color:var(--on-ink)!important;border-color:rgba(238,240,234,.7)}
+.heritage-band .btn-line:hover{background:var(--on-ink);color:var(--ink)!important}
+@media (max-width:820px){.heritage-band::before{background:rgba(20,28,24,.72)}}
