@@ -571,3 +571,33 @@ html,body{overflow-x:clip}
 /* iPhone seam: whole-pixel ticker, hard clip on the hero, and a black overlap at the join */
 .ticker{height:34px;position:relative;z-index:56;box-shadow:0 1px 0 #000}
 .hero{overflow:clip;clip-path:inset(0);-webkit-mask-image:linear-gradient(#000,#000)}
+
+/* phones: the moving sky never shows its edge */
+.hero .sky{left:-30%;right:-30%}
+/* "Our wine" band: text sits higher, less empty photo above it */
+.craftband{min-height:clamp(420px,62vh,620px);align-items:center}
+.craftband .wrap{padding-block:clamp(2.5rem,6vw,4rem)}
+/* carousel chips stay on one line; tighter space above the price */
+.strip .tags{flex-wrap:nowrap;overflow:hidden}
+.strip .tag{white-space:nowrap}
+.wcard .wfoot{padding-top:.25rem;align-items:stretch}
+/* Add to bag as tall as the two price lines */
+.wcard .wfoot .btn,.gift .row .btn{align-self:stretch;display:inline-flex;align-items:center;padding:0 1.25rem;font-size:.92rem;min-height:2.9rem}
+.gift .row{align-items:stretch}
+.buy .btn{padding:.85rem 1.3rem;font-size:.92rem}
+/* footer in true black */
+footer.site{background:#000}
+/* wines page on phones: varietal and sort side by side */
+@media (max-width:900px){.selects{flex-wrap:nowrap;width:100%}.selects .dd{flex:1 1 0;min-width:0}.selects .dd-btn{min-width:0;width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}
+/* "37 states" link and pop-up */
+.states-link{background:none;border:0;padding:0;font:inherit;color:inherit;text-decoration:underline;text-decoration-color:var(--gold);text-underline-offset:3px;cursor:pointer}
+.states-dlg{border:0;border-radius:14px;padding:0;width:min(680px,calc(100% - 32px));max-height:min(80vh,720px);background:var(--paper);color:var(--ink);box-shadow:0 30px 80px rgba(0,0,0,.4)}
+.states-dlg::backdrop{background:rgba(0,0,0,.55)}
+.sd-head{display:flex;justify-content:space-between;align-items:center;padding:1.3rem 1.4rem .2rem}
+.sd-head h2{font-size:1.8rem}
+.sd-x{background:none;border:0;font-size:1.8rem;line-height:1;cursor:pointer;color:var(--ink)}
+.sd-sub{padding:0 1.4rem;color:var(--muted);font-size:.9rem}
+.sd-grid{list-style:none;margin:0;padding:1.1rem 1.4rem 1.4rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:.5rem;overflow:auto}
+.sd-grid li{display:flex;align-items:center;gap:.55rem;background:var(--stone);border-radius:8px;padding:.5rem .6rem;font-size:.85rem;min-width:0}
+.sd-grid b{flex:none;font-size:.72rem;font-weight:600;letter-spacing:.04em;background:var(--ink);color:var(--on-ink);border-radius:4px;padding:.25rem .35rem}
+.sd-grid span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}

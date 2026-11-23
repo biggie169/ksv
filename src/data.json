@@ -19,7 +19,7 @@
    "pairs": [
     "Ribeye",
     "Short ribs",
-    "Aged cheddar"
+    "Cheddar"
    ]
   },
   {
@@ -38,9 +38,9 @@
     "Fresh herbs"
    ],
    "pairs": [
-    "Roast lamb",
+    "Lamb",
     "Mushrooms",
-    "Grilled sausage"
+    "Sausage"
    ]
   },
   {
@@ -59,8 +59,8 @@
     "Cocoa"
    ],
    "pairs": [
-    "Pork tenderloin",
-    "Red-sauce pasta",
+    "Pork",
+    "Pasta",
     "Burgers"
    ]
   },
@@ -81,8 +81,8 @@
    ],
    "pairs": [
     "Barbecue",
-    "Dark chocolate",
-    "Spicy wings"
+    "Chocolate",
+    "Wings"
    ]
   },
   {
@@ -103,7 +103,7 @@
    "pairs": [
     "Pizza",
     "Pulled pork",
-    "Berry desserts"
+    "Berries"
    ]
   },
   {
@@ -122,7 +122,7 @@
     "Honey"
    ],
    "pairs": [
-    "Roast chicken",
+    "Chicken",
     "Crab cakes",
     "Brie"
    ]
@@ -145,7 +145,7 @@
    "pairs": [
     "Thai curry",
     "Fruit tarts",
-    "Soft cheeses"
+    "Soft cheese"
    ]
   }
  ],

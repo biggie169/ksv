@@ -373,8 +373,30 @@ if ($("#eventForm")) $("#eventForm").addEventListener("submit", e => {
   e.preventDefault();
   const n = $("#eName").value.trim(), em = $("#eEmail").value.trim();
   if (!n || !/^\S+@\S+\.\S+$/.test(em)) { $("#eErr").textContent = "Enter your name and a valid email."; return; }
-  $("#eventWrap").innerHTML = `<div class="ok"><p class="eyebrow">Test site</p><h3 style="margin-top:.4rem">Thank you, ${n.replace(/[<>&]/g, "")}.</h3><p style="margin-top:.6rem;color:var(--muted-dk)">On the live site this inquiry goes to the vineyard team, who reply within one business day. Nothing was sent.</p></div>`;
+  $("#eventWrap").innerHTML = `<div class="ok"><p class="eyebrow">Test site</p><h3 style="margin-top:.4rem">Thank you, ${n.replace(/[<>&]/g, "")}.</h3><p style="margin-top:.6rem;color:var(--muted-dk)">On the live site this request goes to the vineyard team, who reply within one business day. Nothing was sent.</p></div>`;
 });
+
+/* ---------- "36 states" opens a grid of the states we ship to ---------- */
+(() => {
+  const NAMES = { AK: "Alaska", AZ: "Arizona", CO: "Colorado", DC: "Washington, D.C.", FL: "Florida", GA: "Georgia", HI: "Hawaii", IA: "Iowa", ID: "Idaho", IL: "Illinois", IN: "Indiana", KS: "Kansas", KY: "Kentucky", LA: "Louisiana", MA: "Massachusetts", MD: "Maryland", MN: "Minnesota", MO: "Missouri", NC: "North Carolina", ND: "North Dakota", NE: "Nebraska", NH: "New Hampshire", NM: "New Mexico", NV: "Nevada", NY: "New York", OH: "Ohio", OK: "Oklahoma", OR: "Oregon", PA: "Pennsylvania", SC: "South Carolina", TN: "Tennessee", TX: "Texas", VT: "Vermont", WA: "Washington", WI: "Wisconsin", WV: "West Virginia", WY: "Wyoming" };
+  const states = (window.KSV.states || []).slice().sort((a, b) => (NAMES[a] || a).localeCompare(NAMES[b] || b));
+  const walker = document.createTreeWalker($("main"), NodeFilter.SHOW_TEXT);
+  const hits = []; while (walker.nextNode()) if (/\d+ states/.test(walker.currentNode.nodeValue)) hits.push(walker.currentNode);
+  if (!hits.length) return;
+  hits.forEach(node => {
+    const m = node.nodeValue.match(/\d+ states/), before = node.nodeValue.slice(0, m.index), after = node.nodeValue.slice(m.index + m[0].length);
+    const btn = document.createElement("button"); btn.type = "button"; btn.className = "states-link"; btn.textContent = m[0];
+    node.replaceWith(document.createTextNode(before), btn, document.createTextNode(after));
+  });
+  const dlg = document.createElement("dialog"); dlg.className = "states-dlg"; dlg.setAttribute("aria-label", "Where we ship");
+  dlg.innerHTML = `<div class="sd-head"><h2>Where we ship</h2><button type="button" class="sd-x" aria-label="Close">&times;</button></div>
+    <p class="sd-sub">${states.length - 1} states and Washington, D.C. An adult 21 or older must sign for delivery.</p>
+    <ul class="sd-grid">${states.map(s => `<li><b>${s}</b><span>${NAMES[s] || s}</span></li>`).join("")}</ul>`;
+  document.body.appendChild(dlg);
+  document.addEventListener("click", e => { if (e.target.closest(".states-link")) { e.preventDefault(); dlg.showModal(); } });
+  dlg.querySelector(".sd-x").onclick = () => dlg.close();
+  dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
+})();
 
 /* ---------- mailing list (test only) ---------- */
 const fForm = $("#footForm");

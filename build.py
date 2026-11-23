@@ -32,9 +32,9 @@ PAGES = [
          title="Shop Pennsylvania Wines & Gift Sets | King Solomon's Vineyard",
          desc="Shop estate-grown Pennsylvania wines: dry reds, whites and holiday gift sets. Shipping to 37 states, free on orders over $50.",
          image="/img/set-299.png"),
-    dict(slug="events", file="events.html", path="/events", priority="0.8",
-         title="Wine for Weddings, Events & Corporate Gifts | King Solomon's Vineyard",
-         desc="Estate Pennsylvania wine for weddings, parties, corporate events and client gifts. Tell us about your event and we'll recommend the wines, with pricing for larger orders.",
+    dict(slug="caterers", file="caterers.html", path="/caterers", priority="0.7",
+         title="Wine for Caterers | Trade Pricing | King Solomon's Vineyard",
+         desc="Trade pricing on estate Pennsylvania wine for caterers, event planners and venues, with standing orders and delivery to your venue.",
          image="/img/ig-event-bottles.jpg"),
     dict(slug="story", file="story.html", path="/story", priority="0.6",
          title="Our Story | King Solomon's Vineyard, Pottsville PA",
@@ -50,7 +50,7 @@ PAGES = [
 REDIRECTS = [
     ("/shop", "/wines"), ("/shop/*", "/wines"), ("/cart", "/wines"),
     ("/about", "/story"), ("/vineyard", "/story"),
-    ("/visit", "/"), ("/contact", "/"), ("/credits", "/"),
+    ("/visit", "/"), ("/events", "/caterers"), ("/contact", "/"), ("/credits", "/"),
 ]
 
 TICKER = (["Free shipping on orders over $50", "Join The Keepers and save 25% on every bottle"] if LAUNCH
