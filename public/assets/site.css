@@ -426,3 +426,6 @@ form.f textarea{resize:vertical}
 .prices .savebadge{margin-bottom:.45rem}
 .gift{position:relative}
 .gift > .savebadge{position:absolute;top:1rem;left:1rem;z-index:1}
+/* "Keeper" highlight: ticker red on light grounds, lighter rose on dark */
+.hl{color:var(--claret)}
+.pagehead .hl,.join .hl,.band.ink .hl{color:#e7a3ae}
