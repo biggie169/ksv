@@ -144,7 +144,19 @@ blockquote.quote cite{display:block;margin-top:1rem;font-family:var(--f-body);fo
 .filters{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.6rem;align-items:center}
 .chip{font:500 .82rem var(--f-body);padding:.5rem .95rem;border:1px solid var(--stone-2);background:var(--paper);border-radius:999px;cursor:pointer;color:var(--ink)}
 .chip[aria-pressed="true"]{background:var(--ink);color:var(--on-ink);border-color:var(--ink)}
-.filters .note{margin-left:auto;font-family:var(--f-mono);font-size:.75rem;color:var(--muted)}
+.filters{justify-content:space-between;gap:.75rem 1rem}
+.chips,.selects{display:flex;flex-wrap:wrap;gap:.5rem}
+.sel select{font:500 .85rem var(--f-body);color:var(--ink);padding:.5rem 2.1rem .5rem 1rem;border:1px solid var(--stone-2);border-radius:999px;cursor:pointer;-webkit-appearance:none;appearance:none;background:var(--paper) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23141c18' fill='none' stroke-width='1.3'/%3E%3C/svg%3E") no-repeat right .9rem center}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.wine.set{grid-template-columns:170px minmax(0,1fr) 190px 210px}
+.wine.set .bottle img{max-height:150px;max-width:100%}
+.wine .kicker{font-family:var(--f-display);font-style:italic;color:var(--gold);font-size:1rem;margin-bottom:.15rem}
+.box{list-style:none;margin:0;padding:0;display:grid;gap:.2rem;font-size:.88rem}
+.prices .list s{color:var(--muted);opacity:.7;margin-right:.25rem}
+.buy .btn{white-space:nowrap}
+.empty{padding-block:2.5rem;color:var(--muted)}
+.empty button{background:none;border:0;padding:0;font:inherit;color:var(--ink);text-decoration:underline;cursor:pointer}
+@media (max-width:900px){.wine.set{grid-template-columns:110px minmax(0,1fr)}.filters{flex-direction:column;align-items:flex-start}}
 .ledger{border-top:1px solid var(--ink)}
 .wine{display:grid;grid-template-columns:72px minmax(0,1fr) 190px 210px;gap:1.5rem;align-items:center;padding-block:1.4rem;border-bottom:1px solid var(--stone-2)}
 .wine .bottle{height:150px;display:flex;justify-content:center;align-items:flex-end}
@@ -519,18 +531,23 @@ html{scroll-behavior:smooth}
   <div class="pagehead">
     <img src="img/barrels.jpg" alt="">
     <div class="wrap">
-      <h1>Our Wines</h1>
-      <p class="lede">Estate grown, hand-picked, made in small lots. Member prices in red.</p>
+      <h1>Wines</h1>
+      <p class="lede">Estate grown. Hand-picked. Made in small lots.</p>
     </div>
   </div>
   <div class="band" style="padding-top:2.5rem">
     <div class="wrap">
-      <div class="filters" role="group" aria-label="Filter wines">
-        <button class="chip" type="button" data-f="all" aria-pressed="true">All wines</button>
-        <button class="chip" type="button" data-f="dry" aria-pressed="false">Dry &amp; medium dry</button>
-        <button class="chip" type="button" data-f="sweet" aria-pressed="false">Sweet &amp; medium sweet</button>
-        <button class="chip" type="button" data-f="red" aria-pressed="false">Red</button>
-        <button class="chip" type="button" data-f="white" aria-pressed="false">White</button>
+      <div class="filters">
+        <div class="chips" role="group" aria-label="Filter">
+          <button class="chip" type="button" data-f="all" aria-pressed="true">All</button>
+          <button class="chip" type="button" data-f="red" aria-pressed="false">Red</button>
+          <button class="chip" type="button" data-f="white" aria-pressed="false">White</button>
+          <button class="chip" type="button" data-f="sets" aria-pressed="false">Gift sets</button>
+        </div>
+        <div class="selects">
+          <label class="sel"><span class="vh">Varietal</span><select id="fVar"><option value="">All varietals</option></select></label>
+          <label class="sel"><span class="vh">Sort</span><select id="fSort"><option value="feat">Featured</option><option value="asc">Price: low to high</option><option value="desc">Price: high to low</option></select></label>
+        </div>
       </div>
       <div class="ledger" id="ledger"></div>
       <div class="shipnote">
@@ -686,6 +703,20 @@ const WINES=[
   desc:"Sweet, floral and crisp. Serve well chilled.",pair:"Thai curry, fruit tarts, soft cheeses"},
 ];
 const SWEET=["","Dry","Medium dry","Medium sweet","Sweet"];
+const VAR={107195:"Red blend",107194:"Cabernet Franc",107193:"Merlot",107192:"Chambourcin",107191:"Red blend",107190:"Chardonnay",107188:"White blend"};
+WINES.forEach(w=>w.varietal=VAR[w.id]);
+const SETS=[
+ {id:"set3",name:"The Connoisseur",size:"3 bottles",img:"set-3.png",for:"For the dry red lover",
+  desc:"Our three dry reds, from Merlot to the flagship 20/20. A serious gift for someone who knows wine.",
+  items:["20/20 Red Blend","Cabernet Franc","Merlot"],value:192,list:169,mem:127},
+ {id:"set6",name:"The Holiday Table",size:"6 bottles",img:"set-6.png",for:"For hosts and holiday gatherings",
+  desc:"Red, white and a sweet white, so every guest at the table finds a favorite.",
+  items:["2 × Merlot","2 × Chardonnay","2 × Clarity White Blend"],value:288,list:249,mem:187},
+ {id:"set12",name:"The Estate Case",size:"12 bottles",img:"set-12.png",for:"For client gifts and a well-stocked cellar",
+  desc:"Two of each current release in one case. Our best value, and the whole estate in a single gift.",
+  items:["2 × 20/20 Red Blend","2 × Cabernet Franc","2 × Merlot","2 × Chambourcin","2 × Chardonnay","2 × Clarity White Blend"],value:656,list:549,mem:412},
+];
+const ITEMS=[...SETS,...WINES];
 const BASE=["25% off every bottle","First access to new releases","Members-only events"];
 const TIERS=[
  {key:"vineyard",name:"Vineyard",fee:20,flag:"",incl:"1 bottle a month",
@@ -715,20 +746,40 @@ document.addEventListener("click",e=>{const j=e.target.closest("[data-join]");if
 const scale=n=>`<div class="scale" aria-hidden="true">${[1,2,3,4].map(i=>`<i class="${i<=n?"on":""}"></i>`).join("")}</div>`;
 function wineRow(w){return `<article class="wine fade" data-color="${w.color}" data-sweet="${w.sweet<=2?"dry":"sweet"}">
   <div class="bottle"><img src="img/bottle_${w.id}.png" alt="${w.name} bottle" loading="lazy"></div>
-  <div><h3>${w.name}</h3><p class="grape">${w.grape}</p><p class="desc">${w.desc}</p><p class="pair">Pair with: ${w.pair}</p></div>
+  <div><h3>${w.name}</h3>${w.grape!==w.name?`<p class="grape">${w.grape}</p>`:""}<p class="desc">${w.desc}</p><p class="pair">Pair with: ${w.pair}</p></div>
   <div class="sweet"><span class="lbl">Sweetness</span>${scale(w.sweet)}<span class="val">${SWEET[w.sweet]}</span></div>
   <div class="buy"><div class="prices"><div class="list">${money(w.list)} retail</div><div class="mem"><small>Member</small>${money(w.mem)}</div></div>
   ${w.stock>0?`<button class="btn btn-ink" type="button" data-add="${w.id}">Add to bag</button>`:`<span class="sold">Sold out. Members get the next release first.</span>`}</div></article>`}
-function renderLedger(f){$("#ledger").innerHTML=WINES.filter(w=>f==="all"||(f==="red"||f==="white"?w.color===f:(f==="dry"?w.sweet<=2:w.sweet>=3))).map(wineRow).join("")}
-renderLedger("all");
-$$(".chip").forEach(c=>c.addEventListener("click",()=>{$$(".chip").forEach(x=>x.setAttribute("aria-pressed",x===c));renderLedger(c.dataset.f)}));
+function setRow(b){return `<article class="wine set fade">
+  <div class="bottle"><img src="img/${b.img}" alt="${b.name} gift set" loading="lazy"></div>
+  <div><p class="kicker">${b.size} · Gift set</p><h3>${b.name}</h3><p class="grape">${b.for}</p><p class="desc">${b.desc}</p></div>
+  <div class="sweet"><span class="lbl">In the box</span><ul class="box">${b.items.map(i=>`<li>${i}</li>`).join("")}</ul></div>
+  <div class="buy"><div class="prices"><div class="list"><s>${money(b.value)}</s> ${money(b.list)}</div><div class="mem"><small>Member</small>${money(b.mem)}</div></div>
+  <button class="btn btn-ink" type="button" data-add="${b.id}">Add to bag</button></div></article>`}
+const shop={f:"all",v:"",s:"feat"};
+const VARIETALS=["Cabernet Franc","Merlot","Chambourcin","Chardonnay","Red blend","White blend"];
+$("#fVar").insertAdjacentHTML("beforeend",VARIETALS.map(v=>`<option value="${v}">${v}</option>`).join(""));
+function renderLedger(){
+  let list=ITEMS.filter(x=>{const isSet=!!x.items;
+    if(shop.f==="sets")return isSet&&!shop.v;
+    if(isSet)return shop.f==="all"&&!shop.v;
+    if(shop.f==="red"&&x.color!=="red")return false;
+    if(shop.f==="white"&&x.color!=="white")return false;
+    return !shop.v||x.varietal===shop.v;});
+  if(shop.s!=="feat")list=[...list].sort((a,b)=>shop.s==="asc"?a.list-b.list:b.list-a.list);
+  $("#ledger").innerHTML=list.length?list.map(x=>x.items?setRow(x):wineRow(x)).join(""):`<p class="empty">Nothing matches those filters. <button type="button" id="clearF">Show all wines</button></p>`;
+  const c=$("#clearF");if(c)c.onclick=()=>{shop.f="all";shop.v="";$("#fVar").value="";$$(".chip").forEach(x=>x.setAttribute("aria-pressed",x.dataset.f==="all"));renderLedger()};}
+renderLedger();
+$$(".chip").forEach(c=>c.addEventListener("click",()=>{$$(".chip").forEach(x=>x.setAttribute("aria-pressed",x===c));shop.f=c.dataset.f;if(shop.f==="sets"){shop.v="";$("#fVar").value=""}renderLedger()}));
+$("#fVar").addEventListener("change",e=>{shop.v=e.target.value;if(shop.v&&shop.f==="sets"){shop.f="all";$$(".chip").forEach(x=>x.setAttribute("aria-pressed",x.dataset.f==="all"))}renderLedger()});
+$("#fSort").addEventListener("change",e=>{shop.s=e.target.value;renderLedger()});
 $("#homeStrip").innerHTML=[107195,107194,107190,107188].map(id=>{const w=WINES.find(x=>x.id===id);return `<a href="#wines"><img src="img/bottle_${w.id}.png" alt="" loading="lazy"><h3>${w.name}</h3><span class="p">${SWEET[w.sweet]} · ${money(w.list)} · <b>Members ${money(w.mem)}</b></span></a>`}).join("");
 $("#states").innerHTML=STATES.map(s=>`<span>${s}</span>`).join("")+`<span>On-site pickup</span>`;
 
 /* bag */
 const bag={};
 function renderBag(){const ids=Object.keys(bag).filter(k=>bag[k]>0);let n=0,list=0,mem=0;
-  $("#lines").innerHTML=ids.length?ids.map(id=>{const w=WINES.find(x=>x.id==id),q=bag[id];n+=q;list+=q*w.list;mem+=q*w.mem;
+  $("#lines").innerHTML=ids.length?ids.map(id=>{const w=ITEMS.find(x=>x.id==id),q=bag[id];n+=q;list+=q*w.list;mem+=q*w.mem;
    return `<div class="line"><div>${w.name}<br><span>${q} × ${money(w.list)}</span></div><div>${money(q*w.list)}<br><span style="color:var(--claret)">${money(q*w.mem)} member</span></div></div>`}).join(""):`<p class="muted">Your bag is empty.</p>`;
   $("#bagCount").textContent=n;$("#bagCount").hidden=!n;
   $("#totals").innerHTML=n?`<div class="r"><span>Retail total</span><b>${money(list)}</b></div><div class="r mem"><span>Member total</span><b>${money(mem)}</b></div>
