@@ -171,7 +171,6 @@ blockquote.quote cite{display:block;margin-top:1rem;font-family:var(--f-body);fo
 .chips,.selects{display:flex;flex-wrap:wrap;gap:.5rem}
 .sel select{font:500 .85rem var(--f-body);color:var(--ink);padding:.5rem 2.1rem .5rem 1rem;border:1px solid var(--stone-2);border-radius:999px;cursor:pointer;-webkit-appearance:none;appearance:none;background:var(--paper) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23141c18' fill='none' stroke-width='1.3'/%3E%3C/svg%3E") no-repeat right .9rem center}
 .vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-.wine.set{grid-template-columns:170px minmax(0,1fr) 190px 210px}
 .wine.set .bottle img{max-height:150px;max-width:100%}
 .wine .kicker{font-family:var(--f-display);font-style:italic;color:var(--gold);font-size:1rem;margin-bottom:.15rem}
 .box{list-style:none;margin:0;padding:0;display:grid;gap:.2rem;font-size:.88rem}
@@ -179,18 +178,18 @@ blockquote.quote cite{display:block;margin-top:1rem;font-family:var(--f-body);fo
 .buy .btn{white-space:nowrap}
 .empty{padding-block:2.5rem;color:var(--muted)}
 .empty button{background:none;border:0;padding:0;font:inherit;color:var(--ink);text-decoration:underline;cursor:pointer}
-@media (max-width:900px){.wine.set{grid-template-columns:110px minmax(0,1fr)}.filters{flex-direction:column;align-items:flex-start}}
+@media (max-width:900px){.filters{flex-direction:column;align-items:flex-start}}
 .ledger{margin:0}
-.wine{display:grid;grid-template-columns:72px minmax(0,1fr) 190px 210px;gap:1.5rem;align-items:center;padding-block:1.4rem;}
-.wine .bottle{height:150px;display:flex;justify-content:center;align-items:flex-end}
-.wine .bottle img{max-height:150px;width:auto}
+.wine{display:grid;grid-template-columns:140px minmax(0,1fr) 190px 210px;gap:1.5rem;align-items:center;padding-block:1.4rem;}
+.wine .bottle{height:150px;display:flex;justify-content:center;align-items:center}
+.wine .bottle img{max-height:150px;max-width:100%;width:auto;height:auto}
 .wine h3{font-size:1.6rem}
 .wine .grape{font-family:var(--f-mono);font-size:.74rem;letter-spacing:.06em;color:var(--muted);margin-top:.3rem}
 .wine .desc{margin-top:.55rem;font-size:.94rem;max-width:34rem}
 .wine .pair{margin-top:.4rem;font-size:.84rem;color:var(--muted)}
 .sweet{display:grid;gap:.35rem}
 .sweet .lbl{font-size:.82rem;color:var(--muted)}
-.scale{display:grid;grid-template-columns:repeat(4,1fr);gap:3px}
+.scale{display:grid;grid-template-columns:repeat(4,1fr);gap:3px;max-width:200px}
 .scale i{height:6px;background:var(--stone-2)}
 .scale i.on{background:var(--gold)}
 .sweet .val{font-size:.85rem}
@@ -202,7 +201,7 @@ blockquote.quote cite{display:block;margin-top:1rem;font-family:var(--f-body);fo
 .buy .btn{padding:.65rem 1rem;font-size:.85rem}
 .buy .sold{font-family:var(--f-mono);font-size:.75rem;color:var(--muted)}
 @media (max-width:900px){
-  .wine{grid-template-columns:64px minmax(0,1fr);gap:1rem 1.2rem;align-items:start}
+  .wine{grid-template-columns:92px minmax(0,1fr);gap:1rem 1.2rem;align-items:start}
   .wine .bottle{height:120px;grid-row:span 3}.wine .bottle img{max-height:120px}
   .sweet,.buy{grid-column:2}
   .buy{justify-items:start;text-align:left;grid-template-columns:auto auto;align-items:end;gap:1rem}
