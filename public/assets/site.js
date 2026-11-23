@@ -101,6 +101,9 @@ document.addEventListener("click", e => {
     }
     const horizon = photoY(HZ);
     hero.style.setProperty("--hz", (horizon - heroTop) + "px");   /* the moving sky fades out just above the treeline */
+    const ch = Math.max(260, (horizon - heroTop) * 1.05);              /* cloud tiles: 3:1, two scales for depth */
+    hero.style.setProperty("--ch1", ch + "px"); hero.style.setProperty("--cw1", ch * 3 + "px");
+    hero.style.setProperty("--ch2", ch * .62 + "px"); hero.style.setProperty("--cw2", ch * .62 * 3 + "px");
     const perW = MARK_AR * (1 + GAP) + TEXT_W * TEXT_AR;              /* logo height per px of monogram width */
     const top = heroTop + (wide ? 10 : 8), avail = horizon - 30 - top;   /* may rise into the clear header; stays above the treeline */
     const h1Room = pageTop(h1) - 28 - top;                            /* never reach the headline */

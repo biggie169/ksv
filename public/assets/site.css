@@ -472,8 +472,8 @@ form.f textarea{resize:vertical}
 .hero .sky{position:absolute;inset:-6%;background:url("/img/sunset.jpg") 50% 8%/cover no-repeat;
   -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 calc(var(--hz,40%) - 70px),transparent calc(var(--hz,40%) + 2px));
   mask-image:linear-gradient(to bottom,#000 0,#000 calc(var(--hz,40%) - 70px),transparent calc(var(--hz,40%) + 2px));
-  animation:skyDrift 26s ease-in-out infinite alternate!important;will-change:transform}
-@keyframes skyDrift{0%{transform:scale(1.08) translateX(calc(-1 * max(48px,5vw)));filter:hue-rotate(0deg) brightness(1)}50%{filter:hue-rotate(-10deg) brightness(1.08)}100%{transform:scale(1.18) translateX(max(48px,5vw));filter:hue-rotate(6deg) brightness(.97)}}
+  animation:skyDrift 18s ease-in-out infinite alternate!important;will-change:transform}
+@keyframes skyDrift{0%{transform:scale(1.1) translateX(calc(-1 * max(64px,7vw)));filter:hue-rotate(0deg) brightness(1)}50%{filter:hue-rotate(-12deg) brightness(1.1)}100%{transform:scale(1.22) translateX(max(64px,7vw));filter:hue-rotate(8deg) brightness(.96)}}
 .events-note a{white-space:nowrap}
 
 /* hero logo: gold, crossfading to ivory as it docks */
@@ -544,3 +544,12 @@ html,body{overflow-x:clip}
 /* desktop: drag the wine carousel */
 @media (pointer:fine){.strip{cursor:grab}.strip.dragging{cursor:grabbing;scroll-snap-type:none;user-select:none}.strip.dragging *{pointer-events:none}}
 .strip img{-webkit-user-drag:none;user-select:none}
+
+/* drifting cloud wisps over the sky, two layers at different scales and speeds */
+.hero .clouds{position:absolute;inset:0;pointer-events:none;
+  background:url("/img/clouds.jpg") 0 4% / var(--cw1,1200px) var(--ch1,400px) repeat-x,url("/img/clouds.jpg") 0 22% / var(--cw2,750px) var(--ch2,250px) repeat-x;
+  mix-blend-mode:screen;opacity:1;
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 14%,#000 calc(var(--hz,40%) - 90px),transparent calc(var(--hz,40%) - 10px));
+  mask-image:linear-gradient(to bottom,transparent 0,#000 14%,#000 calc(var(--hz,40%) - 90px),transparent calc(var(--hz,40%) - 10px));
+  animation:cloudsMove 50s linear infinite!important}
+@keyframes cloudsMove{from{background-position:0 4%,0 22%}to{background-position:calc(-1 * var(--cw1,1200px)) 4%,calc(-1 * var(--cw2,750px)) 22%}}
