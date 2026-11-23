@@ -529,3 +529,6 @@ html,body{overflow-x:clip}
 .heritage-band .btn-line{color:var(--on-ink)!important;border-color:rgba(238,240,234,.7)}
 .heritage-band .btn-line:hover{background:var(--on-ink);color:var(--ink)!important}
 @media (max-width:820px){.heritage-band::before{background:rgba(20,28,24,.72)}}
+.heritage-copy{display:grid;gap:1.2rem;max-width:40rem;margin-left:auto;padding-block:clamp(1rem,4vw,3rem)}
+.heritage-copy h2{font-size:clamp(2rem,4vw,3rem)}
+@media (max-width:820px){.heritage-copy{margin-left:0}}
