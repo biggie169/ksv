@@ -7,7 +7,9 @@ The site is currently a **test build**: hidden from search engines, and checkout
 - [ ] **Connect checkout to Vinoshipper.** "Add to bag" and "Check out" are mockups. Each wine and gift set needs to link to (or embed) its Vinoshipper product, and the gift sets need to be created as products in Vinoshipper.
 - [ ] **Connect club sign-up.** The Keepers join form is a mockup. Set up the three club levels in Vinoshipper (or the chosen club platform) and point the "Join" buttons at it.
 - [ ] **Connect the mailing list** (for example Mailchimp or Klaviyo) to the footer sign-up form.
-- [ ] **Legal review of `/policies`.** The text is carried over unchanged from the old site. Its terms say disputes are governed by **California law and the courts of Napa County, California**, which looks copied from another winery's template and should be corrected for Pennsylvania.
+- [ ] **Legal review of `/policies`.** The text is carried over from the old site, with two proposed changes for the reviewer to approve or amend:
+  - **Governing law.** The old terms named California law and the courts of Napa County, California (apparently copied from another winery's template). Proposed: the laws of the United States and the Commonwealth of Pennsylvania, with disputes heard in the state courts of Schuylkill County or the U.S. District Court for the Middle District of Pennsylvania.
+  - **Typo.** "WE DOES NOT WARRANT" corrected to "WE DO NOT WARRANT".
 - [ ] **Confirm facts with the winemaker:** prices, alcohol levels, vintages, tasting notes, gift set contents, and craft claims (hand-picked, bottled by hand, master vintners).
 - [ ] **Build for launch:** `python3 build.py --launch`, then commit and push.
 

@@ -371,3 +371,10 @@ main.page-enter{animation:pageIn .5s ease both}
 .legal-text h2{font-size:clamp(1.6rem,3vw,2.1rem);margin-top:1.4rem}
 .legal-text h3{font-size:1.2rem;margin-top:.8rem}
 .legal-text p{color:var(--muted);font-size:.95rem}
+
+/* homepage: the full logo sits over the sky, then flies into the header as you scroll */
+.hero-logo{position:fixed;inset:0;z-index:55;pointer-events:none;opacity:0;transition:opacity .4s ease}
+.hero-logo.ready{opacity:1}
+.hero-logo img{position:absolute;top:0;left:0;transform-origin:0 0;will-change:transform,opacity;filter:drop-shadow(0 2px 14px rgba(20,28,24,.35))}
+body[data-page="home"]:not(.logo-docked) header.site .mark img{opacity:0}
+body.logo-docked .hero-logo{visibility:hidden}

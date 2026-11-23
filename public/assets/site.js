@@ -51,25 +51,48 @@ document.addEventListener("click", e => {
   e.preventDefault(); t.scrollIntoView({ behavior: "smooth" });
 });
 
-/* ---------- hero wordmark rests on the treeline of the photo (42% down the image) ---------- */
+/* ---------- homepage logo: full logo over the sky, monogram flies into the header on scroll ---------- */
 (() => {
-  const wm = $(".hero-wm"); if (!wm) return;
-  const HZ = .418, hero = $(".hero"), img = hero.querySelector(":scope > img"), wrap = wm.parentElement, h1 = wrap.querySelector("h1");
-  function place() {
-    wm.classList.remove("float"); wm.style.top = "";
-    const W = hero.clientWidth, H = hero.clientHeight; if (!W || !H) return;
-    const ar = (img.naturalHeight && img.naturalWidth) ? img.naturalHeight / img.naturalWidth : .75;
-    const y = W * ar >= H ? (H - W * ar) / 2 + HZ * W * ar : HZ * H;
-    const hr = hero.getBoundingClientRect(), h1Top = h1.getBoundingClientRect().top - hr.top;
-    const top = y - wm.offsetHeight - 10;
-    if (top > 90 && top + wm.offsetHeight < h1Top - 24) {
-      wm.classList.add("float");
-      const w2 = wrap.getBoundingClientRect(); wm.style.top = (top - (w2.top - hr.top)) + "px";
-    }
+  const box = $(".hero-logo"); if (!box) return;
+  document.body.appendChild(box);          /* outside <main>, whose entrance animation would pin it to the page */
+  const mark = box.querySelector(".hl-mark"), text = box.querySelector(".hl-text");
+  const hero = $(".hero"), photo = hero.querySelector(":scope > img"), dock = $("header.site .mark img");
+  const HZ = .418;                         /* treeline sits 42% down the hero photo */
+  const MARK_AR = 484 / 582, TEXT_W = 633 / 582, TEXT_AR = 207 / 633, GAP = .03;
+  let s = null, ticking = false;
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  function layout() {
+    const sy = scrollY, hr = hero.getBoundingClientRect(), W = hero.clientWidth, H = hero.clientHeight;
+    if (!W || !H) return;
+    const ar = (photo.naturalHeight && photo.naturalWidth) ? photo.naturalHeight / photo.naturalWidth : .75;
+    const heroTop = hr.top + sy;
+    const horizon = heroTop + (W * ar >= H ? (H - W * ar) / 2 + HZ * W * ar : HZ * H);
+    const top = heroTop + 96, avail = horizon - top - 12;
+    const perW = MARK_AR * (1 + GAP) + TEXT_W * TEXT_AR;              /* logo height per px of monogram width */
+    const w = Math.max(130, Math.min(avail / perW, W * .62, 330));
+    const mh = w * MARK_AR, tw = w * TEXT_W, total = mh * (1 + GAP) + tw * TEXT_AR;
+    const y = top + Math.max(0, (avail - total) / 2);
+    s = { x: hr.left + (W - w) / 2, y, w, tx: hr.left + (W - tw) / 2, ty: y + mh * (1 + GAP), tw, sy: 0 };   /* positions as seen at the top of the page */
+    mark.style.width = w + "px"; text.style.width = tw + "px";
+    frame(); box.classList.add("ready");
   }
-  if (img.complete) place(); else img.addEventListener("load", place);
-  addEventListener("resize", place); addEventListener("load", place);
-  if (document.fonts) document.fonts.ready.then(place);
+  function frame() {
+    ticking = false; if (!s) return;
+    const sy = scrollY, D = Math.max(260, innerHeight * .5);
+    const p = Math.min(1, Math.max(0, sy / D)), e = ease(p);
+    const t = dock.getBoundingClientRect();
+    const x = lerp(s.x, t.left, e), y = lerp(s.y - s.sy, t.top, e), k = lerp(1, t.width / s.w, e);
+    mark.style.transform = `translate(${x}px,${y}px) scale(${k})`;
+    text.style.transform = `translate(${s.tx}px,${s.ty - s.sy - p * 70}px)`;
+    text.style.opacity = Math.max(0, 1 - p / .35);
+    document.body.classList.toggle("logo-docked", p >= 1);
+  }
+  addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(frame); } }, { passive: true });
+  addEventListener("resize", layout);
+  if (photo.complete) layout(); else photo.addEventListener("load", layout);
+  addEventListener("load", layout);
+  if (document.fonts) document.fonts.ready.then(layout);
 })();
 
 /* ---------- club levels (home + club page) ---------- */
