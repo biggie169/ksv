@@ -174,7 +174,7 @@ $$("[data-tiers]").forEach(el => {
 /* ---------- join form (club page) ---------- */
 if ($("#joinForm")) {
   let selected = TIERS.some(t => t.key === params.get("tier")) ? params.get("tier") : popular.key;
-  $("#tierOpts").innerHTML = TIERS.map(t => `<label><input type="radio" name="tier" id="t-${t.key}" value="${t.key}"${t.key === selected ? " checked" : ""}> ${t.name} · $${t.fee}/mo</label>`).join("");
+  $("#tierOpts").innerHTML = TIERS.map(t => `<label class="tcard"><input type="radio" name="tier" id="t-${t.key}" value="${t.key}"${t.key === selected ? " checked" : ""}><span class="tn">${t.name}</span><span class="tp">$${t.fee}<small>/mo</small></span><span class="tb">${t.incl}</span></label>`).join("");
   document.addEventListener("click", e => {
     const j = e.target.closest("[data-join]"); if (!j) return;
     e.preventDefault(); const r = $("#t-" + j.dataset.join); if (r) r.checked = true;
@@ -191,33 +191,6 @@ if ($("#joinForm")) {
   });
 }
 
-/* ---------- "Love wine?" calculator (club page): bottles a month and a wine; compares a year at retail with the best-value level ---------- */
-if ($("#calcN")) {
-  const INCL = { vineyard: 1, reserve: 3, kings: 6 }, OFF = { vineyard: .75, reserve: .75, kings: .7 };
-  const buyable = WINES.filter(w => w.stock > 0);
-  $("#calcWine").innerHTML = buyable.map(w => `<option value="${w.id}">${w.name} · ${money(w.list)}</option>`).join("");
-  let cn = 2;
-  const yr = n => "$" + Math.round(n).toLocaleString();
-  const calc = () => {
-    const w = WINES.find(x => x.id == $("#calcWine").value) || buyable[0];
-    const non = cn * w.list * 12;
-    /* illustrative: included bottles count toward the month's wine; extra bottles at that level's price */
-    const plans = TIERS.map(t => ({ t, cost: t.fee * 12 + Math.max(0, cn - INCL[t.key]) * w.list * OFF[t.key] * 12 }));
-    const best = plans.reduce((a, b) => b.cost < a.cost ? b : a);
-    const save = non - best.cost, pct = Math.round(save / non * 100);
-    $("#calcN").textContent = `${cn} bottle${cn > 1 ? "s" : ""} / mo`;
-    $("#cNon").textContent = yr(non) + " / yr"; $("#cMem").textContent = yr(best.cost) + " / yr";
-    $("#cMemLbl").textContent = `As a ${best.t.name} Keeper, fee included`;
-    $("#fNon").style.width = "100%"; $("#fMem").style.width = Math.max(4, best.cost / non * 100) + "%";
-    $("#cSave").innerHTML = save > 0 ? `Keepers save ${yr(save)} a year <span class="pct">${pct}% less</span>` : "Membership breaks even";
-    const b = $("#cBuy"); b.dataset.join = best.t.key; b.href = `/club?tier=${best.t.key}#join`;
-    b.textContent = save > 0 ? `Join ${best.t.name} and save ${yr(save)} a year` : `Join ${best.t.name}`;
-  };
-  $("#calcMinus").onclick = () => { cn = Math.max(1, cn - 1); calc(); };
-  $("#calcPlus").onclick = () => { cn = Math.min(12, cn + 1); calc(); };
-  $("#calcWine").addEventListener("change", calc);
-  calc();
-}
 
 /* ---------- homepage: wine strip and gift sets ---------- */
 if ($("#homeStrip")) {
