@@ -567,3 +567,7 @@ html,body{overflow-x:clip}
 #homeGifts .gift .kp{color:var(--claret)}
 /* black ticker, matching the header */
 .ticker{background:#000;color:var(--on-ink)}
+
+/* iPhone seam: whole-pixel ticker, hard clip on the hero, and a black overlap at the join */
+.ticker{height:34px;position:relative;z-index:56;box-shadow:0 1px 0 #000}
+.hero{overflow:clip;clip-path:inset(0);-webkit-mask-image:linear-gradient(#000,#000)}
