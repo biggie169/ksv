@@ -558,3 +558,12 @@ html,body{overflow-x:clip}
 #homeGifts{position:relative;isolation:isolate;background:#0d130f url("/img/vineyard-aerial.jpg") 50% 50%/cover no-repeat}
 #homeGifts::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(0,0,0,.55),rgba(0,0,0,.35) 45%,rgba(0,0,0,.6))}
 #homeGifts .gift{background:rgba(10,14,12,.58);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid rgba(238,240,234,.12);border-radius:4px}
+
+/* light gift cards over the vine photo */
+#homeGifts .gift{background:var(--paper);-webkit-backdrop-filter:none;backdrop-filter:none;border:0;border-radius:4px;color:var(--ink);box-shadow:0 18px 40px rgba(0,0,0,.35)}
+#homeGifts .gift h3{color:var(--ink)}
+#homeGifts .gift .pr .now{color:var(--ink)}
+#homeGifts .gift .pr s{color:var(--muted)}
+#homeGifts .gift .kp{color:var(--claret)}
+/* black ticker, matching the header */
+.ticker{background:#000;color:var(--on-ink)}
