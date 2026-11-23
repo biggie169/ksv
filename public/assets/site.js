@@ -206,7 +206,7 @@ if ($("#homeStrip")) {
 }
 if ($("#homeGiftsGrid")) {
   $("#homeGiftsGrid").innerHTML = SETS.map(b => `<article class="gift"><span class="savebadge">Save ${money(b.value - b.list)}</span><div class="gimg"><img src="/img/${b.img}" alt="${b.name} gift set" loading="lazy"></div>
-  <h3>${b.name}</h3><p class="for">${b.for}</p>
+  <h3>${b.name}</h3>
   <div class="row"><div class="pr"><span class="now">${money(b.list)}</span><s>${money(b.value)}</s><b>${kp(b.mem)}</b></div>
   <button class="btn btn-gold" type="button" data-add="${b.id}">Add to bag</button></div></article>`).join("");
 }
