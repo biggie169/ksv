@@ -76,7 +76,7 @@ header.site.solid::after{opacity:0}
 /* hero */
 .hero{position:relative;color:var(--on-ink);background:var(--ink);overflow:hidden;min-height:calc(100vh - 2.1rem);min-height:calc(100svh - 2.1rem);display:flex;flex-direction:column;justify-content:flex-end}
 .hero > img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(20,28,24,.88) 0%,rgba(20,28,24,.4) 40%,rgba(20,28,24,0) 68%),linear-gradient(90deg,rgba(20,28,24,.45) 0%,rgba(20,28,24,0) 60%)}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,28,24,.62) 0%,rgba(20,28,24,.28) 22%,rgba(20,28,24,0) 48%),radial-gradient(130% 95% at 50% 40%,rgba(20,28,24,0) 55%,rgba(20,28,24,.4) 100%),linear-gradient(0deg,rgba(20,28,24,.85) 0%,rgba(20,28,24,.35) 38%,rgba(20,28,24,0) 62%),linear-gradient(90deg,rgba(20,28,24,.35) 0%,rgba(20,28,24,0) 55%)}
 .hero .wrap{position:relative;z-index:1;width:100%;padding-block:calc(75px + 2rem) clamp(2.5rem,8vh,5.5rem)}
 .hero-wm{display:block;width:min(100%,clamp(300px,36vw,520px));height:auto;margin-bottom:clamp(1.1rem,2.5vw,1.8rem)}
 .hero-wm.float{position:absolute;left:var(--gut-l);margin:0}
@@ -473,8 +473,8 @@ form.f textarea{resize:vertical}
 .hero .sky{position:absolute;inset:-6%;background:url("/img/sunset.jpg") 50% 8%/cover no-repeat;
   -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 calc(var(--hz,40%) - 70px),transparent calc(var(--hz,40%) + 2px));
   mask-image:linear-gradient(to bottom,#000 0,#000 calc(var(--hz,40%) - 70px),transparent calc(var(--hz,40%) + 2px));
-  animation:skyDrift 34s ease-in-out infinite alternate!important;will-change:transform}
-@keyframes skyDrift{from{transform:scale(1.05) translateX(-3.5%)}to{transform:scale(1.12) translateX(3.5%)}}
+  animation:skyDrift 26s ease-in-out infinite alternate!important;will-change:transform}
+@keyframes skyDrift{0%{transform:scale(1.08) translateX(calc(-1 * max(48px,5vw)));filter:hue-rotate(0deg) brightness(1)}50%{filter:hue-rotate(-10deg) brightness(1.08)}100%{transform:scale(1.18) translateX(max(48px,5vw));filter:hue-rotate(6deg) brightness(.97)}}
 .events-note a{white-space:nowrap}
 
 /* hero logo: gold, crossfading to ivory as it docks */
@@ -505,3 +505,6 @@ form.f textarea{resize:vertical}
 .band.paper .faq details{background:var(--stone)}
 @media (min-width:900px){.faqwrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:3rem;align-items:start}.faqwrap .head{position:sticky;top:100px}}
 .hero-logo .hl-text{filter:drop-shadow(0 1px 2px rgba(20,28,24,.7)) drop-shadow(0 2px 14px rgba(20,28,24,.45))}
+
+/* larger desktop headline, still two lines */
+@media (min-width:900px){.hero h1{font-size:clamp(3.4rem,5.4vw,5.6rem);max-width:25ch}}

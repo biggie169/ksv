@@ -70,14 +70,14 @@ document.addEventListener("click", e => {
   /* built here and placed at the end of <body>, never in the page flow above the hero */
   const box = document.createElement("div");
   box.className = "hero-logo"; box.setAttribute("aria-hidden", "true");
-  box.innerHTML = '<img class="hl-mark" src="/img/ksv-mark-gold.svg" alt=""><img class="hl-mark hl-mark-w" src="/img/ksv-mark-light.svg" alt=""><img class="hl-text" src="/img/ksv-logo-text-gold.svg" alt="">';
+  box.innerHTML = '<img class="hl-mark" src="/img/ksv-mark-light.svg" alt=""><img class="hl-text" src="/img/ksv-logo-text-light.svg" alt="">';
   document.body.appendChild(box); document.body.classList.add("has-hero-logo");
-  const marks = [...box.querySelectorAll(".hl-mark")], markW = box.querySelector(".hl-mark-w"), text = box.querySelector(".hl-text");
+  const marks = [...box.querySelectorAll(".hl-mark")], text = box.querySelector(".hl-text");
   const hero = $(".hero"), photo = hero.querySelector(":scope > img"), dock = $("header.site .mark img");
   const wrap = hero.querySelector(":scope > .wrap"), h1 = hero.querySelector("h1");
   const HZ = .418, FOREST = .56;           /* in the photo: sky meets trees 42% down; the forest gives way to vines 56% down */
   const MARK_AR = 1780 / 2133, TEXT_W = 2331 / 2133, TEXT_AR = 766 / 2331, GAP = .03;
-  let s = null, ticking = false;
+  let s = null, ticking = false, pc = null;   /* pc: displayed progress, eased toward the scroll position */
   const lerp = (a, b, t) => a + (b - a) * t;
   const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
   const pageTop = el => { let y = 0; for (; el; el = el.offsetParent) y += el.offsetTop; return y; };   /* unaffected by the fade-in */
@@ -113,12 +113,14 @@ document.addEventListener("click", e => {
   }
   function frame() {
     ticking = false; if (!s) return;
-    const sy = scrollY, D = Math.max(260, innerHeight * .5);
-    const p = Math.min(1, Math.max(0, sy / D)), e = ease(p);
+    const D = Math.max(260, innerHeight * .5), pt = Math.min(1, Math.max(0, scrollY / D));
+    if (pc === null) pc = pt;
+    pc += (pt - pc) * .16;
+    if (Math.abs(pt - pc) < .002) pc = pt; else { ticking = true; requestAnimationFrame(frame); }
+    const p = pc, e = ease(p);
     const t = dock.getBoundingClientRect();
     const x = lerp(s.x, t.left, e), y = lerp(s.y, t.top, e), k = lerp(1, t.width / s.w, e);
     marks.forEach(m => m.style.transform = `translate(${x}px,${y}px) scale(${k})`);
-    markW.style.opacity = Math.min(1, Math.max(0, (p - .15) / .7));   /* gold to ivory while it travels */
     text.style.transform = `translate(${s.tx}px,${s.ty - p * 70}px)`;
     text.style.opacity = Math.max(0, 1 - p / .35);
     document.body.classList.toggle("logo-docked", p >= 1);
