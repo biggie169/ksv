@@ -92,7 +92,8 @@ main > section[data-page].on{display:block}
 .hero > img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .hero::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(20,28,24,.88) 0%,rgba(20,28,24,.4) 40%,rgba(20,28,24,0) 68%),linear-gradient(90deg,rgba(20,28,24,.45) 0%,rgba(20,28,24,0) 60%)}
 .hero .wrap{position:relative;z-index:1;width:100%;padding-block:calc(75px + 2rem) clamp(2.5rem,8vh,5.5rem)}
-.hero-wm{display:block;height:clamp(34px,4.2vw,50px);width:auto;max-width:100%;margin-bottom:clamp(1.1rem,2.5vw,1.8rem)}
+.hero-wm{display:block;width:min(100%,clamp(300px,36vw,520px));height:auto;margin-bottom:clamp(1.1rem,2.5vw,1.8rem)}
+.hero-wm.float{position:absolute;left:var(--gut-l);margin:0}
 .hero h1{font-size:clamp(2.6rem,6.4vw,5.2rem);max-width:13ch;margin-block:0 .4rem}
 .hero h1 em{font-style:italic;color:var(--gold-soft)}
 .hero .lede{color:#d9ddd6}
@@ -144,6 +145,9 @@ main > section[data-page].on{display:block}
 .gift .pr b small{font-family:var(--f-body);font-size:.75rem;margin-right:.3rem}
 .gift .btn{padding:.65rem 1rem;font-size:.85rem;white-space:nowrap}
 @media (max-width:820px){.gifts{grid-template-columns:1fr}.gift .gimg{height:140px}.gift .gimg img{max-height:140px}}
+.verse{margin:.15rem 0 .2rem;font-family:var(--f-display);font-style:italic;font-size:clamp(1.05rem,1.6vw,1.25rem);line-height:1.45;color:var(--muted);max-width:40rem}
+.verse cite{display:block;margin-top:.3rem;font-family:var(--f-body);font-style:normal;font-size:.82rem;color:var(--gold)}
+.pagehead .verse{color:#dfe3dc}.pagehead .verse cite{color:var(--gold-soft)}
 .tier .plus{font-size:.9rem;color:var(--muted);margin:0 0 -.35rem}
 .legend{margin-top:1rem;font-size:.88rem;color:var(--muted)}
 .legend b{color:var(--claret);font-weight:600}
@@ -410,7 +414,7 @@ html{scroll-behavior:smooth}
   <div class="hero">
     <img src="img/sunset.jpg" alt="The vineyard at dusk under a violet sky">
     <div class="wrap">
-      <img class="hero-wm" src="img/ksv-wordmark.png" alt="King Solomon's Vineyard">
+      <img class="hero-wm" src="img/ksv-wordmark-line.png" alt="King Solomon's Vineyard">
       <h1>Estate wine from the slopes of the <em>Blue Mountain</em></h1>
       <div class="ctas">
         <a class="btn btn-gold" href="#club" data-scroll="homeClub">Join the Wine Club</a>
@@ -423,8 +427,9 @@ html{scroll-behavior:smooth}
   <div class="band" id="homeClub">
     <div class="wrap">
       <div class="head">
-        <p class="eyebrow">Wine Club</p>
-        <h2>Wine lover? This is your club.</h2>
+        <p class="eyebrow">The Keepers &middot; Our wine club</p>
+        <h2>Wine lover? Become a Keeper.</h2>
+        <blockquote class="verse">&ldquo;Solomon had a vineyard at Baalhamon; he let out the vineyard unto keepers.&rdquo;<cite>Song of Solomon 8:11</cite></blockquote>
         <p class="lede muted">Wine every month, 25% off every bottle, and first pick of each release. Cancel anytime.</p>
       </div>
       <div class="tiers" data-tiers></div>
@@ -488,8 +493,9 @@ html{scroll-behavior:smooth}
   <div class="pagehead">
     <img src="img/ig-rows-clouds.jpg" alt="">
     <div class="wrap">
-            <h1>Wine Club</h1>
-      <p class="lede">Our wines are made in small lots, and members get them first. Bottles every month, member prices on everything, and invitations to the vineyard.</p>
+      <h1>The Keepers</h1>
+      <blockquote class="verse">&ldquo;Solomon had a vineyard at Baalhamon; he let out the vineyard unto keepers.&rdquo;<cite>Song of Solomon 8:11</cite></blockquote>
+      <p class="lede">Our wine club takes its name from King Solomon's own vineyard. Keepers receive wine every month, member prices on everything, and first pick of every small-lot release.</p>
     </div>
   </div>
 
@@ -526,7 +532,7 @@ html{scroll-behavior:smooth}
       <div class="join">
         <div>
           <p class="eyebrow">Join</p>
-          <h3 style="margin-top:.6rem" id="joinTitle">Become a member</h3>
+          <h3 style="margin-top:.6rem" id="joinTitle">Become a Keeper</h3>
           <p style="margin-top:.8rem;color:var(--muted-dk)">Must be 21 or older. Billed on the 1st of each month. Pause or cancel anytime. Ships to 37 states, or pick up at the vineyard.</p>
         </div>
         <div id="joinWrap">
@@ -826,6 +832,18 @@ emailForm("#footForm","#fEmail","#fMsg","Test site: on the live site, this adds 
 /* smooth in-page slides */
 document.addEventListener("click",e=>{const a=e.target.closest("[data-scroll]");if(!a)return;e.preventDefault();$("#"+a.dataset.scroll).scrollIntoView({behavior:"smooth"})});
 
+/* hero wordmark rests on the treeline of the photo (42% down the image) */
+(()=>{const HZ=.418,hero=$(".hero"),img=hero.querySelector(":scope > img"),wm=$(".hero-wm"),wrap=wm.parentElement,h1=wrap.querySelector("h1");
+  function place(){wm.classList.remove("float");wm.style.top="";
+    const W=hero.clientWidth,H=hero.clientHeight;if(!W||!H)return;
+    const ar=(img.naturalHeight&&img.naturalWidth)?img.naturalHeight/img.naturalWidth:.75;
+    const y=W*ar>=H?(H-W*ar)/2+HZ*W*ar:HZ*H;
+    const hr=hero.getBoundingClientRect(),wr=wrap.getBoundingClientRect(),h1Top=h1.getBoundingClientRect().top-hr.top;
+    const top=y-wm.offsetHeight-10;
+    if(top>90&&top+wm.offsetHeight<h1Top-24){wm.classList.add("float");const w2=wrap.getBoundingClientRect();wm.style.top=(top-(w2.top-hr.top))+"px"}}
+  if(img.complete)place();else img.addEventListener("load",place);
+  addEventListener("resize",place);addEventListener("load",place);if(document.fonts)document.fonts.ready.then(place);window._placeWM=place})();
+
 /* header: clear over the hero, fades to solid once scrolled */
 const hdrEl=$("header.site");const setSolid=()=>hdrEl.classList.toggle("solid",window.scrollY>30);
 addEventListener("scroll",setSolid,{passive:true});setSolid();
@@ -846,6 +864,7 @@ function show(p){
   $$("main > section[data-page]").forEach(s=>{const on=s.dataset.page===p;s.classList.toggle("on",on);s.classList.remove("page-enter");if(on){void s.offsetWidth;s.classList.add("page-enter")}});
   $$(".menu .links a").forEach(a=>{if(a.getAttribute("href")==="#"+p)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current")});
   $$("[data-tiers]").forEach(el=>el._center&&el._center());
+  if(p==="home"&&window._placeWM)window._placeWM();
   if(pendingScroll){const el=$("#"+pendingScroll);pendingScroll=null;if(el)setTimeout(()=>el.scrollIntoView({behavior:"smooth"}),300)}}
 function route(first){const p=PAGES.includes(location.hash.slice(1))?location.hash.slice(1):"home";
   if(first||window.scrollY<4){show(p);return}
