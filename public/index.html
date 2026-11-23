@@ -59,9 +59,7 @@ p{margin:0}
 
 /* test banner + header */
 .ticker{background:var(--claret);color:#f6e9eb;font:500 .82rem/1 var(--f-body);letter-spacing:.02em;height:2.1rem;position:relative;overflow:hidden}
-.ticker span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding-left:var(--gut-l);padding-right:var(--gut-r);opacity:0;transform:translateY(100%);transition:opacity .5s ease,transform .5s ease}
-.ticker span.on{opacity:1;transform:none}
-.ticker span.out{opacity:0;transform:translateY(-100%)}
+.ticker span{position:absolute;top:0;bottom:0;left:100%;display:flex;align-items:center;white-space:nowrap;will-change:transform}
 header.site{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:var(--ink);color:var(--on-ink);border-bottom:1px solid rgba(216,192,138,.18)}
 .hdr{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;min-height:74px}
 .icon-btn{background:none;border:0;color:var(--on-ink);width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;position:relative;padding:0;border-radius:2px}
@@ -290,14 +288,16 @@ footer.site{background:var(--ink);color:var(--muted-dk);font-size:.88rem}
 .craft dd{margin:0;font-size:.94rem;color:var(--muted)}
 @media (max-width:520px){.craft div{grid-template-columns:1fr;gap:.2rem}}
 .plate{outline:1px solid var(--gold);outline-offset:-10px}
-@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
-.ticker span{transition:opacity .55s ease,transform .55s ease!important}
+html{scroll-behavior:smooth}
+#homeClub,#homeWines,#joinBand{scroll-margin-top:84px}
+.page-enter{animation:pageIn .5s ease both}
+@keyframes pageIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
 .fade{animation:fade .5s ease both}
 @keyframes fade{from{opacity:.4;transform:translateY(6px)}to{opacity:1;transform:none}}
 </style>
 </head>
 <body>
-<div class="ticker" id="ticker" aria-live="polite"><span class="on">Test site</span><span>Free shipping on orders over $50</span></div>
+<div class="ticker" id="ticker" role="note" aria-label="Test site. Free shipping on orders over $50."><span id="tickText" aria-hidden="true"></span></div>
 
 <header class="site">
   <div class="wrap hdr">
@@ -322,7 +322,6 @@ footer.site{background:var(--ink);color:var(--muted-dk);font-size:.88rem}
     <a href="#visit">Visit</a>
   </div>
   <a class="btn btn-gold" href="#club" style="width:fit-content">Join the Club</a>
-  <div class="meta"><span>81 Hemlock Dr., Pottsville, PA 17901</span><span>570-990-5243</span><span>info@kingsolomonsvineyard.com</span></div>
 </nav>
 
 <main>
@@ -334,8 +333,8 @@ footer.site{background:var(--ink);color:var(--muted-dk);font-size:.88rem}
       <h1>Estate wine from the slopes of the <em>Blue Mountain</em></h1>
       <p class="lede">Classic European grapes, tended and picked by hand on our 90-acre family vineyard, then made and bottled here in small lots.</p>
       <div class="ctas">
-        <a class="btn btn-gold" href="#club">Join the Wine Club</a>
-        <a class="btn btn-line" href="#wines">Shop the wines</a>
+        <a class="btn btn-gold" href="#club" data-scroll="homeClub">Join the Wine Club</a>
+        <a class="btn btn-line" href="#wines" data-scroll="homeWines">Shop the wines</a>
       </div>
     </div>
     <div class="facts"><div class="wrap"><ul>
@@ -365,7 +364,7 @@ footer.site{background:var(--ink);color:var(--muted-dk);font-size:.88rem}
       </div>
     </div>
   </div>
-  <div class="band">
+  <div class="band" id="homeClub">
     <div class="wrap">
       <div class="head">
         <p class="eyebrow">Membership</p>
@@ -376,7 +375,7 @@ footer.site{background:var(--ink);color:var(--muted-dk);font-size:.88rem}
     </div>
   </div>
 
-  <div class="band paper">
+  <div class="band paper" id="homeWines">
     <div class="wrap">
       <div class="head">
         <p class="eyebrow">Current releases</p>
@@ -689,7 +688,7 @@ function tierHTML(t){return `<article class="tier${t.flag?" feature":""}">${t.fl
 $$("[data-tiers]").forEach(el=>{el.innerHTML=TIERS.map(tierHTML).join("");el.insertAdjacentHTML("afterend",'<p class="legend">Benefits marked <b>+</b> are new at that level.</p>')});
 $("#tierOpts").innerHTML=TIERS.map(t=>`<label><input type="radio" name="tier" id="t-${t.key}" value="${t.key}"${t.key===selectedTier?" checked":""}> ${t.name} · $${t.fee}/mo</label>`).join("");
 document.addEventListener("click",e=>{const j=e.target.closest("[data-join]");if(!j)return;e.preventDefault();selectedTier=j.dataset.join;const r=$("#t-"+selectedTier);if(r)r.checked=true;
-  if(location.hash!=="#club"){location.hash="club";setTimeout(()=>$("#joinBand").scrollIntoView({behavior:"smooth"}),60)}else $("#joinBand").scrollIntoView({behavior:"smooth"});});
+  if(location.hash!=="#club"){pendingScroll="joinBand";location.hash="club"}else $("#joinBand").scrollIntoView({behavior:"smooth"});});
 
 /* wines */
 const scale=n=>`<div class="scale" aria-hidden="true">${[1,2,3,4].map(i=>`<i class="${i<=n?"on":""}"></i>`).join("")}</div>`;
@@ -740,25 +739,36 @@ function emailForm(form,input,msg,ok){$(form).addEventListener("submit",e=>{e.pr
 emailForm("#notifyForm","#nEmail","#nMsg","Test site: on the live site, this adds you to the opening list.");
 emailForm("#footForm","#fEmail","#fMsg","Test site: on the live site, this adds you to the list.");
 
-/* ticker: one message at a time */
-(()=>{const s=[...document.querySelectorAll("#ticker span")];let i=0;
-  setInterval(()=>{const a=s[i];i=(i+1)%s.length;const b=s[i];a.classList.remove("on");a.classList.add("out");
-    b.classList.remove("out");b.classList.add("on");setTimeout(()=>a.classList.remove("out"),600)},4000)})();
+/* ticker: each message crosses right to left, one at a time */
+(()=>{const box=$("#ticker"),el=$("#tickText"),msgs=["Test site","Free shipping on orders over $50"];let i=0;
+  function run(){el.textContent=msgs[i];i=(i+1)%msgs.length;const d=box.clientWidth+el.offsetWidth;
+    el.animate([{transform:"translateX(0)"},{transform:`translateX(${-d}px)`}],{duration:d/140*1000,easing:"linear"}).onfinish=run}
+  run()})();
+
+/* smooth in-page slides */
+document.addEventListener("click",e=>{const a=e.target.closest("[data-scroll]");if(!a)return;e.preventDefault();$("#"+a.dataset.scroll).scrollIntoView({behavior:"smooth"})});
 
 /* menu */
 const menu=$("#menu"),mScrim=$("#menuScrim"),mBtn=$("#menuBtn");
 function openMenu(o){menu.classList.toggle("open",o);menu.inert=!o;mBtn.setAttribute("aria-expanded",o);mScrim.hidden=!o;if(o)$("#menuClose").focus();else if(document.activeElement&&menu.contains(document.activeElement))mBtn.focus()}
 mBtn.onclick=()=>openMenu(true);$("#menuClose").onclick=()=>openMenu(false);mScrim.onclick=()=>openMenu(false);
-menu.addEventListener("click",e=>{if(e.target.closest("a"))openMenu(false)});
+menu.addEventListener("click",e=>{const a=e.target.closest("a[href^='#']");if(!a)return;e.preventDefault();openMenu(false);
+  const h=a.getAttribute("href");
+  setTimeout(()=>{if(location.hash===h||(h==="#home"&&!location.hash))window.scrollTo({top:0,behavior:"smooth"});else location.hash=h.slice(1)},320)});
 document.addEventListener("keydown",e=>{if(e.key==="Escape")openMenu(false)});
 
 /* routing */
 const PAGES=["home","club","wines","story","visit"];
-function route(){const p=PAGES.includes(location.hash.slice(1))?location.hash.slice(1):"home";
-  $$("main > section[data-page]").forEach(s=>s.classList.toggle("on",s.dataset.page===p));
+let pendingScroll=null;
+function show(p){
+  $$("main > section[data-page]").forEach(s=>{const on=s.dataset.page===p;s.classList.toggle("on",on);s.classList.remove("page-enter");if(on){void s.offsetWidth;s.classList.add("page-enter")}});
   $$(".menu .links a").forEach(a=>{if(a.getAttribute("href")==="#"+p)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current")});
-  window.scrollTo(0,0);}
-window.addEventListener("hashchange",route);route();
+  if(pendingScroll){const el=$("#"+pendingScroll);pendingScroll=null;if(el)setTimeout(()=>el.scrollIntoView({behavior:"smooth"}),300)}}
+function route(first){const p=PAGES.includes(location.hash.slice(1))?location.hash.slice(1):"home";
+  if(first||window.scrollY<4){show(p);return}
+  window.scrollTo({top:0,behavior:"smooth"});const t0=performance.now();
+  (function wait(){if(window.scrollY<4||performance.now()-t0>1000)show(p);else requestAnimationFrame(wait)})();}
+window.addEventListener("hashchange",()=>route(false));route(true);
 </script>
 </body>
 </html>
