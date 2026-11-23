@@ -14,6 +14,8 @@ const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAl
 const money = n => "$" + (Number.isInteger(n) ? n : n.toFixed(2));
 /* Keeper insignia: a ring broken by a small crown, with a script K */
 const KMARK = '<svg class="kmark" viewBox="0 0 32 32" aria-hidden="true"><path d="M11.2 5.2A12 12 0 1 0 20.8 5.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M12.3 7.4 11.6 2.6 14.1 4.6 16 1.6 17.9 4.6 20.4 2.6 19.7 7.4Z" fill="currentColor"/><text x="16.3" y="23.4" text-anchor="middle" font-family="Bodoni Moda, Didot, serif" font-style="italic" font-weight="500" font-size="15.5" fill="currentColor">K</text></svg>';
+/* headline "Keeper": the insignia stands in for the K; the full word stays for screen readers */
+$$(".kword").forEach(el => { const w = el.textContent; el.setAttribute("aria-label", w); el.innerHTML = KMARK + `<span aria-hidden="true">${w.slice(1)}</span>`; });
 const kp = v => `<span class="kp" title="Keeper price">${KMARK}<span class="vh">Keeper price </span>${money(v)}</span>`;
 const PAGE = document.body.dataset.page;
 const params = new URLSearchParams(location.search);
@@ -119,7 +121,7 @@ document.addEventListener("click", e => {
 const joinHref = key => `/club?tier=${key}#join`;
 function tierHTML(t) {
   return `<article class="tier${t.flag ? " feature" : ""}">${t.flag ? `<span class="flag">${t.flag}</span>` : ""}
-  <h3>${t.name}</h3><div class="price"><b>$${t.fee}</b><span>/ month</span></div>
+  <h3>${t.name}<span class="kranks" aria-label="${TIERS.indexOf(t) + 1} of 3">${KMARK.repeat(TIERS.indexOf(t) + 1)}</span></h3><div class="price"><b>$${t.fee}</b><span>/ month</span></div>
   <p class="incl">${t.incl}</p>${t.plus ? `<p class="plus">${t.plus}</p>` : ""}
   <ul>${t.items.map(([i, a]) => `<li${a ? ' class="add"' : ""}>${i}</li>`).join("")}</ul>
   <a class="btn ${t.flag ? "btn-gold" : "btn-ink"}" href="${joinHref(t.key)}" data-join="${t.key}">Join ${t.name}</a></article>`;

@@ -450,3 +450,10 @@ form.f textarea{resize:vertical}
 .kkey .kmark{color:var(--claret);width:1.5em;height:1.5em}
 .kkey a{color:var(--claret);text-underline-offset:3px}
 .totals .r.mem span{display:inline-flex;align-items:center;gap:.3rem}
+
+/* insignia woven into the club headings and level cards */
+.kword{white-space:nowrap}
+.kword .kmark{width:.86em;height:.86em;vertical-align:-.06em;margin-right:.01em}
+.tier h3{display:flex;align-items:center;justify-content:space-between;gap:.6rem}
+.kranks{display:inline-flex;gap:.15rem;color:var(--claret)}
+.kranks .kmark{width:1.35rem;height:1.35rem}
