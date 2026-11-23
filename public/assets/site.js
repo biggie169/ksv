@@ -226,6 +226,29 @@ if ($("#homeStrip")) {
     <div class="wfoot"><span class="pp">${money(w.list)} <b>${kp(w.mem)}</b></span>
     ${w.stock > 0 ? `<button class="btn btn-ink" type="button" data-add="${w.id}">Add to bag</button>` : `<span class="sold">Sold out</span>`}</div>
   </article>`).join("");
+  /* desktop: click and drag to scroll; a drag never counts as a click on a card */
+  if (matchMedia("(pointer: fine)").matches) {
+    let down = false, moved = false, x0 = 0, s0 = 0, last = 0, v = 0;
+    strip.querySelectorAll("img, a").forEach(i => i.draggable = false);
+    strip.addEventListener("dragstart", e => e.preventDefault());
+    strip.addEventListener("pointerdown", e => {
+      if (e.button !== 0 || e.target.closest("button")) return;
+      down = true; moved = false; x0 = e.clientX; s0 = strip.scrollLeft; last = e.clientX; v = 0;
+    });
+    addEventListener("pointermove", e => {
+      if (!down) return;
+      const dx = e.clientX - x0;
+      if (!moved && Math.abs(dx) > 5) { moved = true; strip.classList.add("dragging"); }
+      if (moved) { strip.scrollLeft = s0 - dx; v = e.clientX - last; last = e.clientX; }
+    });
+    addEventListener("pointerup", () => {
+      if (!down) return; down = false;
+      if (!moved) return;
+      strip.scrollLeft -= v * 6;                         /* a little momentum on release */
+      requestAnimationFrame(() => strip.classList.remove("dragging"));   /* snap back on */
+      strip.addEventListener("click", e => { e.preventDefault(); e.stopPropagation(); }, { capture: true, once: true });
+    });
+  }
   strip.insertAdjacentHTML("afterend", `<div class="car-nav"><button class="car-arrow" type="button" data-dir="-1" aria-label="Previous wines">&#8592;</button><div class="tier-dots">${WINES.map((w, i) => `<button type="button" aria-label="Show ${w.name}" data-i="${i}"></button>`).join("")}</div><button class="car-arrow" type="button" data-dir="1" aria-label="More wines">&#8594;</button></div>`);
   const nav = strip.nextElementSibling, dots = [...nav.querySelectorAll(".tier-dots button")], cards = [...strip.children];
   const pad = () => parseFloat(getComputedStyle(strip).scrollPaddingLeft) || 0;
