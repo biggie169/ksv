@@ -192,7 +192,6 @@ blockquote.quote cite{display:block;margin-top:1rem;font-family:var(--f-body);fo
 .wine h3,.wine .wname{font-size:1.6rem}
 .wine .grape{font-size:.85rem;color:var(--muted);margin-top:.25rem}
 .wine .desc{margin-top:.55rem;font-size:.94rem;max-width:34rem}
-.wine .pair{margin-top:.4rem;font-size:.84rem;color:var(--muted)}
 .sweet{display:grid;gap:.35rem}
 .sweet .lbl{font-size:.82rem;color:var(--muted)}
 .scale{display:grid;grid-template-columns:repeat(4,1fr);gap:3px;max-width:200px}
