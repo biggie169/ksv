@@ -463,7 +463,9 @@ form.f textarea{resize:vertical}
 @media (min-width:900px){.hero h1{max-width:21ch}}
 /* events link, set apart from the gift-set button */
 .gift-ctas{margin-bottom:0}
-.events-note{margin-top:2.4rem;padding-top:1.4rem;max-width:40rem;color:var(--muted-dk);font-size:.95rem;box-shadow:0 -1px 0 rgba(238,240,234,.12)}
+.gift-ctas{display:flex;flex-wrap:wrap;align-items:center;gap:1rem 1.8rem}
+.events-note{margin:0;padding-left:1.8rem;border-left:1px solid rgba(238,240,234,.18);color:var(--muted-dk);font-size:.95rem;line-height:1.5}
+@media (max-width:620px){.events-note{padding-left:0;border-left:0;flex-basis:100%}}
 .events-note a{color:var(--gold-soft);text-underline-offset:4px;margin-left:.25rem}
 .events-note a::after{content:" \2192"}
 .events-note a:hover{color:var(--on-ink)}
@@ -471,6 +473,6 @@ form.f textarea{resize:vertical}
 .hero .sky{position:absolute;inset:-6%;background:url("/img/sunset.jpg") 50% 8%/cover no-repeat;
   -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 calc(var(--hz,40%) - 70px),transparent calc(var(--hz,40%) + 2px));
   mask-image:linear-gradient(to bottom,#000 0,#000 calc(var(--hz,40%) - 70px),transparent calc(var(--hz,40%) + 2px));
-  animation:skyDrift 46s ease-in-out infinite alternate;will-change:transform}
-@keyframes skyDrift{from{transform:scale(1.04) translateX(-2.2%)}to{transform:scale(1.1) translateX(2.2%)}}
-@media (prefers-reduced-motion:reduce){.hero .sky{animation:none}}
+  animation:skyDrift 34s ease-in-out infinite alternate!important;will-change:transform}
+@keyframes skyDrift{from{transform:scale(1.05) translateX(-3.5%)}to{transform:scale(1.12) translateX(3.5%)}}
+.events-note a{white-space:nowrap}

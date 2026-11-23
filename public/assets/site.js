@@ -70,12 +70,12 @@ document.addEventListener("click", e => {
   /* built here and placed at the end of <body>, never in the page flow above the hero */
   const box = document.createElement("div");
   box.className = "hero-logo"; box.setAttribute("aria-hidden", "true");
-  box.innerHTML = '<img class="hl-mark" src="/img/ksv-mark-light.png" alt=""><img class="hl-text" src="/img/ksv-logo-text-light.png" alt="">';
+  box.innerHTML = '<img class="hl-mark" src="/img/ksv-mark-light.svg" alt=""><img class="hl-text" src="/img/ksv-logo-text-light.svg" alt="">';
   document.body.appendChild(box); document.body.classList.add("has-hero-logo");
   const mark = box.querySelector(".hl-mark"), text = box.querySelector(".hl-text");
   const hero = $(".hero"), photo = hero.querySelector(":scope > img"), dock = $("header.site .mark img"), h1 = hero.querySelector("h1");
   const HZ = .418;                         /* treeline sits 42% down the hero photo */
-  const MARK_AR = 484 / 582, TEXT_W = 633 / 582, TEXT_AR = 207 / 633, GAP = .03;
+  const MARK_AR = 1780 / 2133, TEXT_W = 2331 / 2133, TEXT_AR = 766 / 2331, GAP = .03;
   let s = null, ticking = false;
   const lerp = (a, b, t) => a + (b - a) * t;
   const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
@@ -122,7 +122,7 @@ document.addEventListener("click", e => {
 /* ---------- hero sky: drifts slowly; on desktop it also leans a few pixels toward the pointer ---------- */
 (() => {
   const hero = $(".hero"), sky = hero && hero.querySelector(".sky"); if (!sky) return;
-  if (matchMedia("(prefers-reduced-motion: reduce)").matches || !matchMedia("(pointer: fine)").matches) return;
+  if (!matchMedia("(pointer: fine)").matches) return;
   let tx = 0, ty = 0, x = 0, y = 0, raf = 0;
   const step = () => { x += (tx - x) * .06; y += (ty - y) * .06; sky.style.translate = `${x.toFixed(2)}px ${y.toFixed(2)}px`; raf = Math.abs(tx - x) + Math.abs(ty - y) > .05 ? requestAnimationFrame(step) : 0; };
   hero.addEventListener("pointermove", e => { const r = hero.getBoundingClientRect(); tx = ((e.clientX - r.left) / r.width - .5) * -24; ty = ((e.clientY - r.top) / r.height - .5) * -10; if (!raf) raf = requestAnimationFrame(step); });
