@@ -88,10 +88,10 @@ main > section[data-page]{display:none}
 main > section[data-page].on{display:block}
 
 /* hero */
-.hero{position:relative;color:var(--on-ink);background:var(--ink);overflow:hidden}
-.hero > img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.85}
-.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(20,28,24,.88) 0%,rgba(20,28,24,.5) 50%,rgba(20,28,24,0) 100%),linear-gradient(0deg,rgba(20,28,24,.7) 0%,rgba(20,28,24,0) 30%)}
-.hero .wrap{position:relative;z-index:1;padding-block:calc(75px + clamp(2.5rem,6vw,5rem)) clamp(2rem,4vw,3rem)}
+.hero{position:relative;color:var(--on-ink);background:var(--ink);overflow:hidden;min-height:calc(100vh - 2.1rem);min-height:calc(100svh - 2.1rem);display:flex;flex-direction:column;justify-content:flex-end}
+.hero > img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(20,28,24,.88) 0%,rgba(20,28,24,.4) 40%,rgba(20,28,24,0) 68%),linear-gradient(90deg,rgba(20,28,24,.45) 0%,rgba(20,28,24,0) 60%)}
+.hero .wrap{position:relative;z-index:1;width:100%;padding-block:calc(75px + 2rem) clamp(2.5rem,8vh,5.5rem)}
 .hero h1{font-size:clamp(2.6rem,6.4vw,5.2rem);max-width:13ch;margin-block:0 .4rem}
 .hero h1 em{font-style:italic;color:var(--gold-soft)}
 .hero .lede{color:#d9ddd6}
@@ -379,12 +379,6 @@ html{scroll-behavior:smooth}
         <a class="btn btn-line" href="#wines" data-scroll="homeWines">Shop the wines</a>
       </div>
     </div>
-    <div class="facts"><div class="wrap"><ul>
-      <li><b>2010</b>First vines planted</li>
-      <li><b>90 acres</b>Schuylkill County, PA</li>
-      <li><b>11</b>Grape varieties</li>
-      <li><b>By hand</b>Every vine, every harvest</li>
-    </ul></div></div>
   </div>
 
 
