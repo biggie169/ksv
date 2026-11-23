@@ -12,6 +12,9 @@ const tags = (label, list, cls = "", compact = false) => `<div class="tags${comp
 const ITEMS = [...SETS, ...WINES];
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
 const money = n => "$" + (Number.isInteger(n) ? n : n.toFixed(2));
+/* Keeper insignia: a ring broken by a small crown, with a script K */
+const KMARK = '<svg class="kmark" viewBox="0 0 32 32" aria-hidden="true"><path d="M11.2 5.2A12 12 0 1 0 20.8 5.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M12.3 7.4 11.6 2.6 14.1 4.6 16 1.6 17.9 4.6 20.4 2.6 19.7 7.4Z" fill="currentColor"/><text x="16.3" y="23.4" text-anchor="middle" font-family="Bodoni Moda, Didot, serif" font-style="italic" font-weight="500" font-size="15.5" fill="currentColor">K</text></svg>';
+const kp = v => `<span class="kp" title="Keeper price">${KMARK}<span class="vh">Keeper price </span>${money(v)}</span>`;
 const PAGE = document.body.dataset.page;
 const params = new URLSearchParams(location.search);
 const store = {
@@ -180,7 +183,7 @@ if ($("#homeStrip")) {
     <a class="wimg" href="/wines#w-${w.id}"><img src="/img/bottle_${w.id}.png" alt="${w.name}" loading="lazy"></a>
     <h3><a href="/wines#w-${w.id}">${w.name}</a></h3>
     ${tags("Notes", w.notes.slice(0, 2), "", true)}${tags("Pairs with", w.pairs.slice(0, 2), " pair", true)}
-    <div class="wfoot"><span class="pp">${money(w.list)} <b>Members ${money(w.mem)}</b></span>
+    <div class="wfoot"><span class="pp">${money(w.list)} <b>${kp(w.mem)}</b></span>
     ${w.stock > 0 ? `<button class="btn btn-ink" type="button" data-add="${w.id}">Add to bag</button>` : `<span class="sold">Sold out</span>`}</div>
   </article>`).join("");
   strip.insertAdjacentHTML("afterend", `<div class="car-nav"><button class="car-arrow" type="button" data-dir="-1" aria-label="Previous wines">&#8592;</button><div class="tier-dots">${WINES.map((w, i) => `<button type="button" aria-label="Show ${w.name}" data-i="${i}"></button>`).join("")}</div><button class="car-arrow" type="button" data-dir="1" aria-label="More wines">&#8594;</button></div>`);
@@ -202,9 +205,39 @@ if ($("#homeStrip")) {
 if ($("#homeGiftsGrid")) {
   $("#homeGiftsGrid").innerHTML = SETS.map(b => `<article class="gift"><span class="savebadge">Save ${money(b.value - b.list)}</span><div class="gimg"><img src="/img/${b.img}" alt="${b.name} gift set" loading="lazy"></div>
   <h3>${b.name}</h3><p class="for">${b.for}</p>
-  <div class="row"><div class="pr"><span class="now">${money(b.list)}</span><s>${money(b.value)}</s><b>Members ${money(b.mem)}</b></div>
+  <div class="row"><div class="pr"><span class="now">${money(b.list)}</span><s>${money(b.value)}</s><b>${kp(b.mem)}</b></div>
   <button class="btn btn-gold" type="button" data-add="${b.id}">Add to bag</button></div></article>`).join("");
 }
+
+/* ---------- branded dropdowns: a styled button and list drive the hidden native select ---------- */
+const dropdowns = [];
+function refreshSelects() { dropdowns.forEach(d => d.sync()); }
+$$(".sel select").forEach(sel => {
+  const wrap = sel.closest(".sel"); wrap.classList.add("dd");
+  const btn = document.createElement("button"); btn.type = "button"; btn.className = "dd-btn";
+  btn.setAttribute("aria-haspopup", "listbox"); btn.setAttribute("aria-expanded", "false");
+  const list = document.createElement("ul"); list.className = "dd-list"; list.setAttribute("role", "listbox"); list.hidden = true;
+  wrap.append(btn, list); sel.tabIndex = -1; sel.setAttribute("aria-hidden", "true");
+  const build = () => { list.innerHTML = [...sel.options].map((o, i) => `<li role="option" data-i="${i}" tabindex="-1"${o.selected ? ' aria-selected="true"' : ""}>${o.textContent}</li>`).join(""); };
+  const sync = () => { btn.textContent = sel.options[sel.selectedIndex] ? sel.options[sel.selectedIndex].textContent : ""; build(); };
+  const open = o => {
+    if (o) $$(".dd-list").forEach(l => { if (l !== list) { l.hidden = true; l.previousElementSibling.setAttribute("aria-expanded", "false"); } });
+    list.hidden = !o; btn.setAttribute("aria-expanded", o);
+    if (o) (list.querySelector('[aria-selected="true"]') || list.firstElementChild).focus();
+  };
+  const choose = i => { sel.selectedIndex = i; sync(); open(false); btn.focus(); sel.dispatchEvent(new Event("change")); };
+  btn.onclick = () => open(list.hidden);
+  list.addEventListener("click", e => { const li = e.target.closest("li"); if (li) choose(+li.dataset.i); });
+  list.addEventListener("keydown", e => {
+    const items = [...list.children], k = items.indexOf(document.activeElement);
+    if (e.key === "ArrowDown") { e.preventDefault(); items[Math.min(k + 1, items.length - 1)].focus(); }
+    else if (e.key === "ArrowUp") { e.preventDefault(); items[Math.max(k - 1, 0)].focus(); }
+    else if (e.key === "Enter" || e.key === " ") { e.preventDefault(); if (k >= 0) choose(k); }
+    else if (e.key === "Escape" || e.key === "Tab") { open(false); if (e.key === "Escape") btn.focus(); }
+  });
+  document.addEventListener("click", e => { if (!wrap.contains(e.target)) open(false); });
+  dropdowns.push({ sync }); sync();
+});
 
 /* ---------- wines page ---------- */
 if ($("#ledger")) {
@@ -212,13 +245,13 @@ if ($("#ledger")) {
   <div class="bottle"><img src="/img/bottle_${w.id}.png" alt="${w.name} bottle" loading="lazy"></div>
   <div class="info"><h2 class="wname">${w.name}</h2>${w.grape !== w.name ? `<p class="grape">${w.grape}</p>` : ""}<p class="desc">${w.desc}</p>
   ${tags("Notes", w.notes)}${tags("Pairs with", w.pairs, " pair")}</div>
-  <div class="buy"><div class="prices"><div class="list">${money(w.list)}</div><div class="mem">Members ${money(w.mem)}</div></div>
+  <div class="buy"><div class="prices"><div class="list">${money(w.list)}</div><div class="mem">${kp(w.mem)}</div></div>
   ${w.stock > 0 ? `<button class="btn btn-ink" type="button" data-add="${w.id}">Add to bag</button>` : `<span class="sold">Sold out. Members get the next release first.</span>`}</div></article>`;
   const setRow = b => `<article class="wine set fade" id="${b.id}">
   <div class="bottle"><img src="/img/${b.img}" alt="${b.name} gift set" loading="lazy"></div>
   <div class="info"><h2 class="wname">${b.name}</h2><p class="grape">${b.for}</p><p class="desc">${b.desc}</p>
   ${tags("In the box", b.items)}</div>
-  <div class="buy"><div class="prices"><span class="savebadge">Save ${money(b.value - b.list)}</span><div class="list"><s>${money(b.value)}</s> ${money(b.list)}</div><div class="mem">Members ${money(b.mem)}</div></div>
+  <div class="buy"><div class="prices"><span class="savebadge">Save ${money(b.value - b.list)}</span><div class="list"><s>${money(b.value)}</s> ${money(b.list)}</div><div class="mem">${kp(b.mem)}</div></div>
   <button class="btn btn-ink" type="button" data-add="${b.id}">Add to bag</button></div></article>`;
   const VARIETALS = ["Cabernet Franc", "Merlot", "Chambourcin", "Chardonnay", "Red blend", "White blend"];
   const shop = { f: ["red", "white", "sets"].includes(params.get("f")) ? params.get("f") : "all", v: VARIETALS.includes(params.get("v")) ? params.get("v") : "", s: "feat" };
@@ -227,6 +260,7 @@ if ($("#ledger")) {
   const syncChips = () => $$(".chip").forEach(x => x.setAttribute("aria-pressed", x.dataset.f === shop.f));
   const syncUrl = () => { const q = new URLSearchParams(); if (shop.f !== "all") q.set("f", shop.f); if (shop.v) q.set("v", shop.v); history.replaceState(null, "", location.pathname + (q.toString() ? "?" + q : "")); };
   function render() {
+    refreshSelects();
     let list = ITEMS.filter(x => {
       const isSet = !!x.items;
       if (shop.f === "sets") return isSet && !shop.v;
@@ -242,6 +276,7 @@ if ($("#ledger")) {
   $$(".chip").forEach(c => c.addEventListener("click", () => { shop.f = c.dataset.f; if (shop.f === "sets") { shop.v = ""; $("#fVar").value = ""; } syncChips(); syncUrl(); render(); }));
   $("#fVar").addEventListener("change", e => { shop.v = e.target.value; if (shop.v && shop.f === "sets") shop.f = "all"; syncChips(); syncUrl(); render(); });
   $("#fSort").addEventListener("change", e => { shop.s = e.target.value; render(); });
+  $("#kkey").innerHTML = `${KMARK} Keeper price. <a href="/club">Become a Keeper</a> and save 25% on every bottle.`;
   syncChips(); render();
 }
 
@@ -251,11 +286,11 @@ function renderBag() {
   const ids = Object.keys(bag).filter(k => bag[k] > 0 && ITEMS.some(x => x.id == k)); let n = 0, list = 0, mem = 0;
   $("#lines").innerHTML = ids.length ? ids.map(id => {
     const w = ITEMS.find(x => x.id == id), q = bag[id]; n += q; list += q * w.list; mem += q * w.mem;
-    return `<div class="line"><div>${w.name}<br><span>${q} × ${money(w.list)}</span></div><div>${money(q * w.list)}<br><span style="color:var(--claret)">${money(q * w.mem)} member</span></div></div>`;
+    return `<div class="line"><div>${w.name}<br><span>${q} × ${money(w.list)}</span></div><div>${money(q * w.list)}<br><span style="color:var(--claret)">${kp(q * w.mem)}</span></div></div>`;
   }).join("") : `<p class="muted">Your bag is empty.</p>`;
   $("#bagCount").textContent = n; $("#bagCount").hidden = !n;
-  $("#totals").innerHTML = n ? `<div class="r"><span>Retail total</span><b>${money(list)}</b></div><div class="r mem"><span>Member total</span><b>${money(mem)}</b></div>
-   <div class="nudge"><span>Members save <b style="color:var(--claret)">${money(list - mem)}</b> on this order. Membership starts at $30 a month, bottle included.</span><a class="btn btn-gold" href="${joinHref("vineyard")}" data-join="vineyard">Join and save</a><button class="btn btn-line" type="button" style="color:var(--ink)" id="checkoutBtn">Check out at retail price</button></div><p id="coMsg" class="muted" style="font-size:.82rem"></p>` : "";
+  $("#totals").innerHTML = n ? `<div class="r"><span>Retail total</span><b>${money(list)}</b></div><div class="r mem"><span>${KMARK} Keeper total</span><b>${money(mem)}</b></div>
+   <div class="nudge"><span>Keepers save <b style="color:var(--claret)">${money(list - mem)}</b> on this order. Membership starts at $30 a month, bottle included.</span><a class="btn btn-gold" href="${joinHref("vineyard")}" data-join="vineyard">Join and save</a><button class="btn btn-line" type="button" style="color:var(--ink)" id="checkoutBtn">Check out at retail price</button></div><p id="coMsg" class="muted" style="font-size:.82rem"></p>` : "";
 }
 function openBag(o) { $("#drawer").classList.toggle("open", o); $("#drawer").setAttribute("aria-hidden", !o); $("#scrim").hidden = !o; }
 document.addEventListener("click", e => {
