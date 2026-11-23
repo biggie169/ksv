@@ -300,8 +300,7 @@ footer.site{background:var(--ink);color:var(--on-ink);font-size:.8rem;padding-bl
 .sf{display:grid;gap:.75rem}
 .sf-title{display:flex;flex-direction:column;align-items:flex-start;gap:.7rem}
 .sf-wm{width:min(100%,360px);height:auto}
-.sf-title h2{font-family:var(--f-display);font-weight:400;font-size:1.2rem;line-height:1.2;margin:0}
-.sf-body{color:var(--muted-dk);margin:0}
+.sf-h{font-family:var(--f-display);font-weight:400;font-size:1.2rem;line-height:1.2;margin:.3rem 0 0}
 .sf-sub{display:flex;height:42px;background:var(--paper);border-radius:2px;overflow:hidden;max-width:480px;width:100%}
 .sf-sub input{flex:1;min-width:0;border:0;background:transparent;padding:0 .9rem;font:400 1rem var(--f-body);color:var(--ink)}
 .sf-sub input::placeholder{font-size:.82rem;color:var(--muted)}
@@ -321,9 +320,9 @@ footer.site{background:var(--ink);color:var(--on-ink);font-size:.8rem;padding-bl
 .sf-base img{height:18px;width:auto}
 @media (min-width:900px){
   footer.site{padding-block:2.2rem 1.2rem}
-  .sf{grid-template-columns:minmax(0,.8fr) minmax(280px,1.2fr) auto;grid-template-areas:"title body cols" "title sub cols" "title terms cols" "base base base";column-gap:3rem;row-gap:.6rem;align-items:start}
-  .sf-title{grid-area:title}.sf-title h2{font-size:1.4rem}
-  .sf-body{grid-area:body}.sf-sub{grid-area:sub}.sf-terms{grid-area:terms}
+  .sf{grid-template-columns:minmax(0,.8fr) minmax(280px,1.2fr) auto;grid-template-areas:"title head cols" "title sub cols" "title terms cols" "base base base";column-gap:3rem;row-gap:.6rem;align-items:start}
+  .sf-title{grid-area:title}.sf-h{grid-area:head;font-size:1.4rem;margin:0}
+  .sf-sub{grid-area:sub}.sf-terms{grid-area:terms}
   .sf-cols{grid-area:cols;border-top:0;padding-top:0;margin-top:0;gap:2.75rem}
   .sf-base{grid-area:base;margin-top:1rem}
 }
