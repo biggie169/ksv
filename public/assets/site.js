@@ -121,7 +121,7 @@ document.addEventListener("click", e => {
 const joinHref = key => `/club?tier=${key}#join`;
 function tierHTML(t) {
   return `<article class="tier${t.flag ? " feature" : ""}">${t.flag ? `<span class="flag">${t.flag}</span>` : ""}
-  <h3>${t.name}<span class="kranks" aria-label="${TIERS.indexOf(t) + 1} of 3">${KMARK.repeat(TIERS.indexOf(t) + 1)}</span></h3><div class="price"><b>$${t.fee}</b><span>/ month</span></div>
+  <h3>${t.name}</h3><div class="price"><b>$${t.fee}</b><span>/ month</span></div>
   <p class="incl">${t.incl}</p>${t.plus ? `<p class="plus">${t.plus}</p>` : ""}
   <ul>${t.items.map(([i, a]) => `<li${a ? ' class="add"' : ""}>${i}</li>`).join("")}</ul>
   <a class="btn ${t.flag ? "btn-gold" : "btn-ink"}" href="${joinHref(t.key)}" data-join="${t.key}">Join ${t.name}</a></article>`;
