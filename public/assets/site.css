@@ -49,7 +49,7 @@ p{margin:0}
 .ticker{background:var(--claret);color:#f6e9eb;font:500 .82rem/1 var(--f-body);letter-spacing:.02em;height:2.1rem;position:relative;overflow:hidden}
 .ticker span{position:absolute;top:0;bottom:0;left:100%;display:flex;align-items:center;white-space:nowrap;will-change:transform}
 header.site{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;color:var(--on-ink);margin-bottom:-75px;isolation:isolate;border-bottom:1px solid transparent;transition:border-color .4s ease}
-header.site::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--ink);opacity:0;transition:opacity .9s cubic-bezier(.33,0,.15,1);will-change:opacity}
+header.site::before{content:"";position:absolute;inset:0;z-index:-1;background:#000;opacity:0;transition:opacity .9s cubic-bezier(.33,0,.15,1);will-change:opacity}
 header.site::after{content:"";position:absolute;inset:0 0 -40px;z-index:-2;background:linear-gradient(rgba(20,28,24,.6),rgba(20,28,24,0));transition:opacity .9s cubic-bezier(.33,0,.15,1);pointer-events:none;will-change:opacity}
 header.site.solid{border-bottom-color:transparent}
 header.site.solid::before{opacity:1}
@@ -553,3 +553,8 @@ html,body{overflow-x:clip}
   mask-image:linear-gradient(to bottom,transparent 0,#000 14%,#000 calc(var(--hz,40%) - 90px),transparent calc(var(--hz,40%) - 10px));
   animation:cloudsMove 50s linear infinite!important}
 @keyframes cloudsMove{from{background-position:0 4%,0 22%}to{background-position:calc(-1 * var(--cw1,1200px)) 4%,calc(-1 * var(--cw2,750px)) 22%}}
+
+/* holiday gifts over the overhead vine-row photo; cards as smoky glass */
+#homeGifts{position:relative;isolation:isolate;background:#0d130f url("/img/vineyard-aerial.jpg") 50% 50%/cover no-repeat}
+#homeGifts::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(0,0,0,.55),rgba(0,0,0,.35) 45%,rgba(0,0,0,.6))}
+#homeGifts .gift{background:rgba(10,14,12,.58);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid rgba(238,240,234,.12);border-radius:4px}
