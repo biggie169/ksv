@@ -512,3 +512,11 @@ form.f textarea{resize:vertical}
 .tier-nav{display:none!important}
 .car-nav .tier-dots{display:none}
 @media (max-width:380px){.gift-ctas{gap:.8rem}.gift-ctas .btn{padding-inline:1rem}.events-note{font-size:.8rem}}
+
+/* homepage club copy runs the full width on desktop */
+@media (min-width:900px){#homeClub .head{max-width:none}#homeClub .head .lede,#homeClub .verse{max-width:62rem}}
+/* wine carousel bleeds to the window edges; the first card lines up with the page content */
+html,body{overflow-x:clip}
+.strip{margin-inline:calc(50% - 50vw);padding-left:max(var(--gut-l),calc((100vw - var(--wrap)) / 2 + var(--gut-l)));padding-right:max(var(--gut-r),calc((100vw - var(--wrap)) / 2 + var(--gut-r)));scroll-padding-inline:max(var(--gut-l),calc((100vw - var(--wrap)) / 2 + var(--gut-l)))}
+@media (min-width:901px){.wcard{flex:0 0 calc((min(100vw,var(--wrap)) - var(--gut-l) - var(--gut-r) - 2 * 1.25rem) / 3.15)}}
+.car-nav{display:none!important}
