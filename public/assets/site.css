@@ -464,10 +464,9 @@ form.f textarea{resize:vertical}
 /* events link, set apart from the gift-set button */
 .gift-ctas{margin-bottom:0}
 .gift-ctas{display:flex;flex-wrap:wrap;align-items:center;gap:1rem 1.8rem}
-.events-note{margin:0;padding-left:1.8rem;border-left:1px solid rgba(238,240,234,.18);color:var(--muted-dk);font-size:.95rem;line-height:1.5}
-@media (max-width:620px){.events-note{padding-left:0;border-left:0;flex-basis:100%}}
+.events-note{margin:0;color:var(--muted-dk);font-size:.95rem;line-height:1.45}
+@media (max-width:620px){.gift-ctas{flex-wrap:nowrap;gap:1rem}.events-note{font-size:.875rem;min-width:0}}
 .events-note a{color:var(--gold-soft);text-underline-offset:4px;margin-left:.25rem}
-.events-note a::after{content:" \2192"}
 .events-note a:hover{color:var(--on-ink)}
 /* moving sky: a copy of the photo, masked to the sky, drifting slowly */
 .hero .sky{position:absolute;inset:-6%;background:url("/img/sunset.jpg") 50% 8%/cover no-repeat;
@@ -508,3 +507,8 @@ form.f textarea{resize:vertical}
 
 /* larger desktop headline, still two lines */
 @media (min-width:900px){.hero h1{font-size:clamp(3.4rem,5.4vw,5.6rem);max-width:25ch}}
+
+/* no position dots under the swipeable rows */
+.tier-nav{display:none!important}
+.car-nav .tier-dots{display:none}
+@media (max-width:380px){.gift-ctas{gap:.8rem}.gift-ctas .btn{padding-inline:1rem}.events-note{font-size:.8rem}}
