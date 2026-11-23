@@ -151,55 +151,52 @@
  ],
  "sets": [
   {
-   "id": "set3",
-   "name": "The Connoisseur",
-   "size": "3 bottles",
-   "img": "set-3.png",
-   "for": "For the dry red lover",
-   "desc": "Our three dry reds, from Merlot to the flagship 20/20. A serious gift for someone who knows wine.",
+   "id": "set99",
+   "name": "The Pair",
+   "size": "2 bottles",
+   "img": "set-99.png",
+   "for": "A host gift for any table",
+   "desc": "Our dry Cabernet Franc and a round, fruit-forward Chardonnay. One red, one white, ready to bring to dinner.",
+   "items": [
+    "Cabernet Franc",
+    "Chardonnay"
+   ],
+   "value": 112,
+   "list": 99,
+   "mem": 84
+  },
+  {
+   "id": "set199",
+   "name": "The Holiday Table",
+   "size": "4 bottles",
+   "img": "set-199.png",
+   "for": "For hosts and holiday gatherings",
+   "desc": "Three of our reds and a Chardonnay, enough for a holiday dinner with something for every guest.",
    "items": [
     "20/20 Red Blend",
     "Cabernet Franc",
-    "Merlot"
+    "Merlot",
+    "Chardonnay"
    ],
-   "value": 192,
-   "list": 169,
-   "mem": 127
+   "value": 240,
+   "list": 199,
+   "mem": 180
   },
   {
-   "id": "set6",
-   "name": "The Holiday Table",
+   "id": "set299",
+   "name": "The Connoisseur",
    "size": "6 bottles",
-   "img": "set-6.png",
-   "for": "For hosts and holiday gatherings",
-   "desc": "Red, white and a sweet white, so every guest at the table finds a favorite.",
-   "items": [
-    "2 × Merlot",
-    "2 × Chardonnay",
-    "2 × Clarity White Blend"
-   ],
-   "value": 288,
-   "list": 249,
-   "mem": 187
-  },
-  {
-   "id": "set12",
-   "name": "The Estate Case",
-   "size": "12 bottles",
-   "img": "set-12.png",
-   "for": "For client gifts and stocking up for the season",
-   "desc": "Two of each current release in one case. Our best value, and the whole estate in a single gift.",
+   "img": "set-299.png",
+   "for": "For the dry red lover and client gifts",
+   "desc": "Two each of our three dry reds, from Merlot to the flagship 20/20. Our best value, and a serious gift for someone who knows wine.",
    "items": [
     "2 × 20/20 Red Blend",
     "2 × Cabernet Franc",
-    "2 × Merlot",
-    "2 × Chambourcin",
-    "2 × Chardonnay",
-    "2 × Clarity White Blend"
+    "2 × Merlot"
    ],
-   "value": 656,
-   "list": 549,
-   "mem": 412
+   "value": 384,
+   "list": 299,
+   "mem": 288
   }
  ],
  "tiers": [

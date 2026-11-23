@@ -200,7 +200,7 @@ if ($("#homeStrip")) {
   upd(); addEventListener("resize", upd);
 }
 if ($("#homeGiftsGrid")) {
-  $("#homeGiftsGrid").innerHTML = SETS.map(b => `<article class="gift"><div class="gimg"><img src="/img/${b.img}" alt="${b.name} gift set" loading="lazy"></div>
+  $("#homeGiftsGrid").innerHTML = SETS.map(b => `<article class="gift"><span class="savebadge">Save ${money(b.value - b.list)}</span><div class="gimg"><img src="/img/${b.img}" alt="${b.name} gift set" loading="lazy"></div>
   <h3>${b.name}</h3><p class="for">${b.for}</p>
   <div class="row"><div class="pr"><span class="now">${money(b.list)}</span><s>${money(b.value)}</s><b>Members ${money(b.mem)}</b></div>
   <button class="btn btn-gold" type="button" data-add="${b.id}">Add to bag</button></div></article>`).join("");
@@ -218,7 +218,7 @@ if ($("#ledger")) {
   <div class="bottle"><img src="/img/${b.img}" alt="${b.name} gift set" loading="lazy"></div>
   <div class="info"><h2 class="wname">${b.name}</h2><p class="grape">${b.for}</p><p class="desc">${b.desc}</p>
   ${tags("In the box", b.items)}</div>
-  <div class="buy"><div class="prices"><div class="list"><s>${money(b.value)}</s> ${money(b.list)}</div><div class="mem">Members ${money(b.mem)}</div></div>
+  <div class="buy"><div class="prices"><span class="savebadge">Save ${money(b.value - b.list)}</span><div class="list"><s>${money(b.value)}</s> ${money(b.list)}</div><div class="mem">Members ${money(b.mem)}</div></div>
   <button class="btn btn-ink" type="button" data-add="${b.id}">Add to bag</button></div></article>`;
   const VARIETALS = ["Cabernet Franc", "Merlot", "Chambourcin", "Chardonnay", "Red blend", "White blend"];
   const shop = { f: ["red", "white", "sets"].includes(params.get("f")) ? params.get("f") : "all", v: VARIETALS.includes(params.get("v")) ? params.get("v") : "", s: "feat" };

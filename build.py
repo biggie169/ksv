@@ -31,7 +31,7 @@ PAGES = [
     dict(slug="wines", file="wines.html", path="/wines", priority="0.9",
          title="Shop Pennsylvania Wines & Gift Sets | King Solomon's Vineyard",
          desc="Shop estate-grown Pennsylvania wines: dry reds, whites and holiday gift sets. Shipping to 37 states, free on orders over $50.",
-         image="/img/set-12.png"),
+         image="/img/set-299.png"),
     dict(slug="events", file="events.html", path="/events", priority="0.8",
          title="Wine for Weddings, Events & Corporate Gifts | King Solomon's Vineyard",
          desc="Estate Pennsylvania wine for weddings, parties, corporate events and client gifts. Tell us about your event and we'll recommend the wines, with pricing for larger orders.",
