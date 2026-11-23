@@ -72,12 +72,13 @@ document.addEventListener("click", e => {
     const sy = scrollY, hr = hero.getBoundingClientRect(), W = hero.clientWidth, H = hero.clientHeight;
     if (!W || !H) return;
     const ar = (photo.naturalHeight && photo.naturalWidth) ? photo.naturalHeight / photo.naturalWidth : .75;
-    const heroTop = hr.top + sy;
+    let heroTop = 0; for (let el = hero; el; el = el.offsetParent) heroTop += el.offsetTop;   /* page position, unaffected by the fade-in slide */
     const horizon = heroTop + (W * ar >= H ? (H - W * ar) / 2 + HZ * W * ar : HZ * H);
     const perW = MARK_AR * (1 + GAP) + TEXT_W * TEXT_AR;              /* logo height per px of monogram width */
     const base = Math.max(130, Math.min((horizon - heroTop - 108) / perW, W * .62, 330));
-    const top = heroTop + 24, avail = horizon - 52 - top;              /* may rise into the clear header; stays well above the treeline */
-    const w = Math.min(base * 1.2, avail / perW, W * .7);
+    const wide = W >= 900;                                             /* desktop gets a larger logo; phones keep their sizing */
+    const top = heroTop + (wide ? 10 : 24), avail = horizon - (wide ? 30 : 52) - top;   /* may rise into the clear header; stays above the treeline */
+    const w = wide ? Math.min(avail / perW, 380) : Math.min(base * 1.2, avail / perW, W * .7);
     const mh = w * MARK_AR, tw = w * TEXT_W, total = mh * (1 + GAP) + tw * TEXT_AR;
     const y = top + Math.max(0, (avail - total) / 2);
     s = { x: hr.left + (W - w) / 2, y, w, tx: hr.left + (W - tw) / 2, ty: y + mh * (1 + GAP), tw, sy: 0 };   /* positions as seen at the top of the page */
@@ -101,6 +102,7 @@ document.addEventListener("click", e => {
   if (photo.complete) layout(); else photo.addEventListener("load", layout);
   addEventListener("load", layout);
   if (document.fonts) document.fonts.ready.then(layout);
+  $("main").addEventListener("animationend", layout);
 })();
 
 /* ---------- club levels (home + club page) ---------- */
