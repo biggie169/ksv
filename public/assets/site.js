@@ -73,7 +73,7 @@ document.addEventListener("click", e => {
   box.innerHTML = '<img class="hl-mark" src="/img/ksv-mark-light.png" alt=""><img class="hl-text" src="/img/ksv-logo-text-light.png" alt="">';
   document.body.appendChild(box); document.body.classList.add("has-hero-logo");
   const mark = box.querySelector(".hl-mark"), text = box.querySelector(".hl-text");
-  const hero = $(".hero"), photo = hero.querySelector(":scope > img"), dock = $("header.site .mark img");
+  const hero = $(".hero"), photo = hero.querySelector(":scope > img"), dock = $("header.site .mark img"), h1 = hero.querySelector("h1");
   const HZ = .418;                         /* treeline sits 42% down the hero photo */
   const MARK_AR = 484 / 582, TEXT_W = 633 / 582, TEXT_AR = 207 / 633, GAP = .03;
   let s = null, ticking = false;
@@ -86,13 +86,15 @@ document.addEventListener("click", e => {
     let heroTop = 0; for (let el = hero; el; el = el.offsetParent) heroTop += el.offsetTop;   /* page position, unaffected by the fade-in slide */
     const py = (parseFloat(getComputedStyle(photo).objectPosition.split(" ")[1]) || 50) / 100;
     const horizon = heroTop + (W * ar >= H ? (H - W * ar) * py + HZ * W * ar : HZ * H);
+    hero.style.setProperty("--hz", (horizon - heroTop) + "px");   /* the moving sky fades out just above the treeline */
     const perW = MARK_AR * (1 + GAP) + TEXT_W * TEXT_AR;              /* logo height per px of monogram width */
     const base = Math.max(130, Math.min((horizon - heroTop - 108) / perW, W * .62, 330));
     const wide = W >= 900;                                             /* desktop gets a larger logo; phones keep their sizing */
     const top = heroTop + (wide ? 10 : 24), avail = horizon - (wide ? 30 : 52) - top;   /* may rise into the clear header; stays above the treeline */
-    const w = wide ? Math.min(avail / perW, W * .205, 360) : Math.min(base * 1.2, avail / perW, W * .7);
+    const h1Room = (h1 ? h1.getBoundingClientRect().top + scrollY : Infinity) - 28 - top;   /* never reach the headline */
+    const w = wide ? Math.min(avail / perW, h1Room / perW, W * .205, 360) : Math.min(base * 1.2, avail / perW, W * .7);
     const mh = w * MARK_AR, tw = w * TEXT_W, total = mh * (1 + GAP) + tw * TEXT_AR;
-    const y = top + Math.max(0, (avail - total) / 2);
+    const y = top + Math.max(0, (Math.min(avail, h1Room) - total) / 2);
     s = { x: hr.left + (W - w) / 2, y, w, tx: hr.left + (W - tw) / 2, ty: y + mh * (1 + GAP), tw, sy: 0 };   /* positions as seen at the top of the page */
     mark.style.width = w + "px"; text.style.width = tw + "px";
     frame(); box.classList.add("ready");
@@ -115,6 +117,16 @@ document.addEventListener("click", e => {
   addEventListener("load", layout);
   if (document.fonts) document.fonts.ready.then(layout);
   $("main").addEventListener("animationend", layout);
+})();
+
+/* ---------- hero sky: drifts slowly; on desktop it also leans a few pixels toward the pointer ---------- */
+(() => {
+  const hero = $(".hero"), sky = hero && hero.querySelector(".sky"); if (!sky) return;
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches || !matchMedia("(pointer: fine)").matches) return;
+  let tx = 0, ty = 0, x = 0, y = 0, raf = 0;
+  const step = () => { x += (tx - x) * .06; y += (ty - y) * .06; sky.style.translate = `${x.toFixed(2)}px ${y.toFixed(2)}px`; raf = Math.abs(tx - x) + Math.abs(ty - y) > .05 ? requestAnimationFrame(step) : 0; };
+  hero.addEventListener("pointermove", e => { const r = hero.getBoundingClientRect(); tx = ((e.clientX - r.left) / r.width - .5) * -24; ty = ((e.clientY - r.top) / r.height - .5) * -10; if (!raf) raf = requestAnimationFrame(step); });
+  hero.addEventListener("pointerleave", () => { tx = 0; ty = 0; if (!raf) raf = requestAnimationFrame(step); });
 })();
 
 /* ---------- club levels (home + club page) ---------- */
