@@ -454,6 +454,7 @@ form.f textarea{resize:vertical}
 /* insignia woven into the club headings and level cards */
 .kword{white-space:nowrap}
 .kword .kmark{width:.86em;height:.86em;vertical-align:-.06em;margin-right:.01em}
-.tier h3{display:flex;align-items:center;justify-content:space-between;gap:.6rem}
+.tier h3{display:flex;align-items:center;gap:.4em}
 .kranks{display:inline-flex;gap:.15rem;color:var(--claret)}
 .kranks .kmark{width:1.35rem;height:1.35rem}
+.hero > img{object-position:50% 8%}

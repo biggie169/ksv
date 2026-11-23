@@ -15,8 +15,7 @@ const money = n => "$" + (Number.isInteger(n) ? n : n.toFixed(2));
 /* Keeper insignia: a ring broken by a small crown, with a script K */
 const KMARK = '<svg class="kmark" viewBox="0 0 32 32" aria-hidden="true"><path d="M11.2 5.2A12 12 0 1 0 20.8 5.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M12.3 7.4 11.6 2.6 14.1 4.6 16 1.6 17.9 4.6 20.4 2.6 19.7 7.4Z" fill="currentColor"/><text x="16.3" y="23.4" text-anchor="middle" font-family="Bodoni Moda, Didot, serif" font-style="italic" font-weight="500" font-size="15.5" fill="currentColor">K</text></svg>';
 /* headline "Keeper": the insignia stands in for the K; the full word stays for screen readers */
-$$(".kword").forEach(el => { const w = el.textContent; el.setAttribute("aria-label", w); el.innerHTML = KMARK + `<span aria-hidden="true">${w.slice(1)}</span>`; });
-const kp = v => `<span class="kp" title="Keeper price">${KMARK}<span class="vh">Keeper price </span>${money(v)}</span>`;
+const kp = v => `<span class="kp" title="Keeper price"><span class="vh">Keeper price </span>${money(v)}${KMARK}</span>`;
 const PAGE = document.body.dataset.page;
 const params = new URLSearchParams(location.search);
 const store = {
@@ -85,12 +84,13 @@ document.addEventListener("click", e => {
     if (!W || !H) return;
     const ar = (photo.naturalHeight && photo.naturalWidth) ? photo.naturalHeight / photo.naturalWidth : .75;
     let heroTop = 0; for (let el = hero; el; el = el.offsetParent) heroTop += el.offsetTop;   /* page position, unaffected by the fade-in slide */
-    const horizon = heroTop + (W * ar >= H ? (H - W * ar) / 2 + HZ * W * ar : HZ * H);
+    const py = (parseFloat(getComputedStyle(photo).objectPosition.split(" ")[1]) || 50) / 100;
+    const horizon = heroTop + (W * ar >= H ? (H - W * ar) * py + HZ * W * ar : HZ * H);
     const perW = MARK_AR * (1 + GAP) + TEXT_W * TEXT_AR;              /* logo height per px of monogram width */
     const base = Math.max(130, Math.min((horizon - heroTop - 108) / perW, W * .62, 330));
     const wide = W >= 900;                                             /* desktop gets a larger logo; phones keep their sizing */
     const top = heroTop + (wide ? 10 : 24), avail = horizon - (wide ? 30 : 52) - top;   /* may rise into the clear header; stays above the treeline */
-    const w = wide ? Math.min(avail / perW, 380) : Math.min(base * 1.2, avail / perW, W * .7);
+    const w = wide ? Math.min(avail / perW, W * .205, 360) : Math.min(base * 1.2, avail / perW, W * .7);
     const mh = w * MARK_AR, tw = w * TEXT_W, total = mh * (1 + GAP) + tw * TEXT_AR;
     const y = top + Math.max(0, (avail - total) / 2);
     s = { x: hr.left + (W - w) / 2, y, w, tx: hr.left + (W - tw) / 2, ty: y + mh * (1 + GAP), tw, sy: 0 };   /* positions as seen at the top of the page */
