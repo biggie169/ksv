@@ -137,7 +137,18 @@ main > section[data-page].on{display:block}
 .heritage .hb{display:grid;gap:1rem;font-size:1.12rem;line-height:1.7;max-width:40rem}
 .heritage .more{font-size:.95rem;width:fit-content;text-underline-offset:4px;text-decoration-color:var(--gold)}
 @media (max-width:820px){.heritage{grid-template-columns:1fr}}
-@media (max-width:900px){.tiers{grid-template-columns:1fr;gap:1.6rem}}
+.tiers{position:relative}
+.tier-nav,.tier-cta{display:none}
+.tier-dots{display:flex;gap:.5rem;align-items:center}
+.tier-dots button{width:8px;height:8px;border-radius:4px;border:0;padding:0;background:var(--stone-2);cursor:pointer;transition:background .25s,width .25s}
+.tier-dots button.on{background:var(--gold);width:24px}
+@media (max-width:900px){
+  .tiers{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:.9rem;margin-inline:calc(-1 * var(--gut-l)) calc(-1 * var(--gut-r));padding:.8rem var(--gut-r) .4rem var(--gut-l);scroll-padding-inline:var(--gut-l);scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .tiers::-webkit-scrollbar{display:none}
+  .tier{flex:0 0 82%;scroll-snap-align:center}
+  .tier-nav{display:flex;align-items:center;justify-content:space-between;margin-top:1rem;font-size:.85rem;color:var(--muted)}
+  .tier-cta{display:flex;width:100%;margin-top:1rem}
+}
 
 /* split feature */
 .split{display:grid;grid-template-columns:1.05fr 1fr;gap:clamp(2rem,5vw,4.5rem);align-items:center}
@@ -749,7 +760,14 @@ function tierHTML(t){return `<article class="tier${t.flag?" feature":""}">${t.fl
   <p class="incl">${t.incl}</p>
   <ul>${t.items.map(([i,a])=>`<li${a?' class="add"':""}>${i}</li>`).join("")}</ul>
   <a class="btn ${t.flag?"btn-gold":"btn-ink"}" href="#club" data-join="${t.key}">Join ${t.name}</a></article>`}
-$$("[data-tiers]").forEach(el=>{el.innerHTML=TIERS.map(tierHTML).join("");el.insertAdjacentHTML("afterend",'<p class="legend"><b>+</b> New at this level</p>')});
+$$("[data-tiers]").forEach(el=>{el.innerHTML=TIERS.map(tierHTML).join("");
+  el.insertAdjacentHTML("afterend",`<div class="tier-nav"><div class="tier-dots">${TIERS.map((t,i)=>`<button type="button" aria-label="Show ${t.name}" data-i="${i}"></button>`).join("")}</div><span>Swipe to compare</span></div><a class="btn btn-gold tier-cta" href="#club" data-join="cellar">Join Cellar, our most popular</a><p class="legend"><b>+</b> New at this level</p>`);
+  const dots=[...el.nextElementSibling.querySelectorAll("button")];
+  const upd=()=>{const mid=el.scrollLeft+el.clientWidth/2;let k=0,best=1e9;[...el.children].forEach((c,i)=>{const d=Math.abs(c.offsetLeft+c.offsetWidth/2-mid);if(d<best){best=d;k=i}});dots.forEach((d,i)=>d.classList.toggle("on",i===k))};
+  el.addEventListener("scroll",upd,{passive:true});
+  dots.forEach(d=>d.onclick=()=>{const c=el.children[+d.dataset.i];el.scrollTo({left:c.offsetLeft-(el.clientWidth-c.offsetWidth)/2,behavior:"smooth"})});
+  el._center=()=>{if(!el.clientWidth)return;if(getComputedStyle(el).display==="flex"){const c=el.children[1];el.scrollLeft=c.offsetLeft-(el.clientWidth-c.offsetWidth)/2}upd()};
+  el._center();});
 $("#tierOpts").innerHTML=TIERS.map(t=>`<label><input type="radio" name="tier" id="t-${t.key}" value="${t.key}"${t.key===selectedTier?" checked":""}> ${t.name} · $${t.fee}/mo</label>`).join("");
 document.addEventListener("click",e=>{const j=e.target.closest("[data-join]");if(!j)return;e.preventDefault();selectedTier=j.dataset.join;const r=$("#t-"+selectedTier);if(r)r.checked=true;
   if(location.hash!=="#club"){pendingScroll="joinBand";location.hash="club"}else $("#joinBand").scrollIntoView({behavior:"smooth"});});
@@ -851,6 +869,7 @@ let pendingScroll=null;
 function show(p){
   $$("main > section[data-page]").forEach(s=>{const on=s.dataset.page===p;s.classList.toggle("on",on);s.classList.remove("page-enter");if(on){void s.offsetWidth;s.classList.add("page-enter")}});
   $$(".menu .links a").forEach(a=>{if(a.getAttribute("href")==="#"+p)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current")});
+  $$("[data-tiers]").forEach(el=>el._center&&el._center());
   if(pendingScroll){const el=$("#"+pendingScroll);pendingScroll=null;if(el)setTimeout(()=>el.scrollIntoView({behavior:"smooth"}),300)}}
 function route(first){const p=PAGES.includes(location.hash.slice(1))?location.hash.slice(1):"home";
   if(first||window.scrollY<4){show(p);return}
