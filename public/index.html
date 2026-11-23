@@ -302,7 +302,7 @@ form.f .opts input{width:auto}
 footer.site{background:var(--ink);color:var(--on-ink);font-size:.8rem;padding-block:1.6rem calc(1.1rem + env(safe-area-inset-bottom,0px))}
 .sf{display:grid;gap:.75rem}
 .sf-title{display:flex;flex-direction:column;align-items:flex-start;gap:.7rem}
-.sf-wm{height:44px;width:auto}
+.sf-wm{width:min(100%,360px);height:auto}
 .sf-title h3{font-family:var(--f-display);font-weight:400;font-size:1.2rem;line-height:1.2;margin:0}
 .sf-body{color:var(--muted-dk);margin:0}
 .sf-sub{display:flex;height:42px;background:var(--paper);border-radius:2px;overflow:hidden;max-width:480px;width:100%}
@@ -325,7 +325,7 @@ footer.site{background:var(--ink);color:var(--on-ink);font-size:.8rem;padding-bl
 @media (min-width:900px){
   footer.site{padding-block:2.2rem 1.2rem}
   .sf{grid-template-columns:minmax(0,.8fr) minmax(280px,1.2fr) auto;grid-template-areas:"title body cols" "title sub cols" "title terms cols" "base base base";column-gap:3rem;row-gap:.6rem;align-items:start}
-  .sf-title{grid-area:title}.sf-wm{height:54px}.sf-title h3{font-size:1.4rem}
+  .sf-title{grid-area:title}.sf-title h3{font-size:1.4rem}
   .sf-body{grid-area:body}.sf-sub{grid-area:sub}.sf-terms{grid-area:terms}
   .sf-cols{grid-area:cols;border-top:0;padding-top:0;margin-top:0;gap:2.75rem}
   .sf-base{grid-area:base;margin-top:1rem}
@@ -406,6 +406,17 @@ html{scroll-behavior:smooth}
   </div>
 
 
+  <div class="band" id="homeClub">
+    <div class="wrap">
+      <div class="head">
+        <p class="eyebrow">Wine Club</p>
+        <h2>Wine lover? This is your club.</h2>
+        <p class="lede muted">Wine every month, 25% off every bottle, and first pick of each release. Cancel anytime.</p>
+      </div>
+      <div class="tiers" data-tiers></div>
+    </div>
+  </div>
+
   <section class="craftband">
     <img src="img/ig-white-cluster.jpg" alt="A cluster of white grapes ripening in the sun">
     <div class="wrap">
@@ -418,17 +429,6 @@ html{scroll-behavior:smooth}
         </dl>
     </div>
   </section>
-  <div class="band" id="homeClub">
-    <div class="wrap">
-      <div class="head">
-        <p class="eyebrow">The Wine Club</p>
-        <h2>Wine lover? This is your club.</h2>
-        <p class="lede muted">Wine every month, 25% off every bottle, and first pick of each release. Cancel anytime.</p>
-      </div>
-      <div class="tiers" data-tiers></div>
-    </div>
-  </div>
-
   <div class="band paper" id="homeWines">
     <div class="wrap">
       <div class="head">
@@ -476,7 +476,7 @@ html{scroll-behavior:smooth}
   <div class="pagehead">
     <img src="img/ig-rows-clouds.jpg" alt="">
     <div class="wrap">
-            <h1>The Wine Club</h1>
+            <h1>Wine Club</h1>
       <p class="lede">Our wines are made in small lots, and members get them first. Bottles every month, member prices on everything, and invitations to the vineyard.</p>
     </div>
   </div>
@@ -688,7 +688,7 @@ html{scroll-behavior:smooth}
 
 <footer class="site">
   <div class="wrap sf">
-    <div class="sf-title"><img class="sf-wm" src="img/ksv-wordmark.png" alt="King Solomon's Vineyard"><h3>Join our list</h3></div>
+    <div class="sf-title"><img class="sf-wm" src="img/ksv-wordmark-line.png" alt="King Solomon's Vineyard"><h3>Join our list</h3></div>
     <p class="sf-body">New releases and vineyard events, straight to your inbox.</p>
     <form class="sf-sub" id="footForm" novalidate><input id="fEmail" type="email" aria-label="Email address" placeholder="Email address" autocomplete="email"><button type="submit">Sign up</button></form>
     <div class="sf-terms"><p>You must be 21 or older to purchase. Please drink responsibly.</p><p id="fMsg" aria-live="polite"></p></div>
