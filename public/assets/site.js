@@ -424,7 +424,7 @@ if ($("#eventForm")) $("#eventForm").addEventListener("submit", e => {
   const html = x => {
     const set = !!x.items;
     const img = set ? `/img/${x.img}` : `/img/bottle_${x.id}.png`;
-    const meta = !set && x.grape !== x.name ? `<p class="pv-sub">${x.grape}</p>` : "";
+    const meta = "";
     const chips = set ? tags("In the box", x.items) : tags("Notes", x.notes) + tags("Pairs with", x.pairs, " pair");
     const price = set ? `<div class="list"><s>${money(x.value)}</s> ${money(x.list)}</div>` : `<div class="list">${money(x.list)}</div>`;
     const buy = (set || x.stock > 0) ? `<button class="btn btn-ink" type="button" data-add="${x.id}">Add to bag</button>` : `<span class="sold">Sold out</span>`;
@@ -442,15 +442,17 @@ if ($("#eventForm")) $("#eventForm").addEventListener("submit", e => {
   function open(card, item) {
     if (busy) return; busy = true; cur = card;
     ov.innerHTML = html(item); ov.hidden = false; document.documentElement.classList.add("pv-lock");
-    const r = card.getBoundingClientRect(), ox = r.left + r.width / 2, oy = r.top + r.height / 2;
-    ov.style.transformOrigin = `${ox}px ${oy}px`;
-    ov.animate([{ opacity: 0, transform: "scale(.94)" }, { opacity: 1, transform: "none" }], { duration: 380, easing: "cubic-bezier(.2,.8,.2,1)" })
-      .onfinish = () => { busy = false; ov.querySelector(".pv-x").focus({ preventScroll: true }); };
+    const bg = ov.querySelector(".pv-bg"), fg = [ov.querySelector(".pv-in"), ov.querySelector(".pv-x")];
+    bg.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 260, easing: "ease-out" });
+    fg.forEach(el => el.animate([{ opacity: 0, transform: "translateY(12px) scale(.985)" }, { opacity: 1, transform: "none" }], { duration: 340, delay: 200, easing: "cubic-bezier(.2,.8,.2,1)", fill: "backwards" }));
+    setTimeout(() => { busy = false; ov.querySelector(".pv-x").focus({ preventScroll: true }); }, 560);
   }
   function close() {
     if (ov.hidden || busy) return; busy = true;
-    ov.animate([{ opacity: 1, transform: "none" }, { opacity: 0, transform: "scale(.96)" }], { duration: 240, easing: "ease-in", fill: "forwards" })
-      .onfinish = () => { ov.hidden = true; ov.innerHTML = ""; ov.getAnimations().forEach(a => a.cancel()); document.documentElement.classList.remove("pv-lock"); busy = false; };
+    const bg = ov.querySelector(".pv-bg"), fg = [ov.querySelector(".pv-in"), ov.querySelector(".pv-x")];
+    fg.forEach(el => el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 160, easing: "ease-in", fill: "forwards" }));
+    bg.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 240, delay: 120, easing: "ease-in", fill: "forwards" })
+      .onfinish = () => { ov.hidden = true; ov.innerHTML = ""; document.documentElement.classList.remove("pv-lock"); busy = false; };
   }
   document.addEventListener("click", e => {
     const z = e.target.closest(".wcard .zoomable, .gift .zoomable"); if (!z) return;
