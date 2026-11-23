@@ -354,10 +354,10 @@ footer.site{background:var(--ink);color:var(--on-ink);font-size:.8rem;padding-bl
 @media (max-width:720px){.craftband .craft{grid-template-columns:1fr;gap:1rem}}
 html{scroll-behavior:smooth}
 #homeClub,#homeWines,#join{scroll-margin-top:84px}
-main.page-enter{animation:pageIn .5s ease both}
-@keyframes pageIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+main.page-enter{animation:pageIn .6s ease both}
+@keyframes pageIn{from{opacity:0}to{opacity:1}}
 .fade{animation:fade .5s ease both}
-@keyframes fade{from{opacity:.4;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes fade{from{opacity:.4}to{opacity:1}}
 .sf-base a{color:inherit}
 .pagehead.plain{background:var(--ink)}
 .legal-text{max-width:46rem;display:grid;gap:.9rem}
