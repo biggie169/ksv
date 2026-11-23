@@ -373,8 +373,8 @@ main.page-enter{animation:pageIn .5s ease both}
 .legal-text p{color:var(--muted);font-size:.95rem}
 
 /* homepage: the full logo sits over the sky, then flies into the header as you scroll */
-.hero-logo{position:fixed;inset:0;z-index:55;width:auto!important;height:auto!important;pointer-events:none;opacity:0;transition:opacity .4s ease}
+.hero-logo{position:fixed;inset:0;z-index:55;pointer-events:none;opacity:0;transition:opacity .4s ease}
 .hero-logo.ready{opacity:1}
 .hero-logo img{position:absolute;top:0;left:0;transform-origin:0 0;will-change:transform,opacity;filter:drop-shadow(0 2px 14px rgba(20,28,24,.35))}
-body[data-page="home"]:not(.logo-docked) header.site .mark img{opacity:0}
+body.has-hero-logo:not(.logo-docked) header.site .mark img{opacity:0}
 body.logo-docked .hero-logo{visibility:hidden}

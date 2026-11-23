@@ -53,8 +53,12 @@ document.addEventListener("click", e => {
 
 /* ---------- homepage logo: full logo over the sky, monogram flies into the header on scroll ---------- */
 (() => {
-  const box = $(".hero-logo"); if (!box) return;
-  document.body.appendChild(box);          /* outside <main>, whose entrance animation would pin it to the page */
+  if (PAGE !== "home" || !$(".hero")) return;
+  /* built here and placed at the end of <body>, never in the page flow above the hero */
+  const box = document.createElement("div");
+  box.className = "hero-logo"; box.setAttribute("aria-hidden", "true");
+  box.innerHTML = '<img class="hl-mark" src="/img/ksv-mark-light.png" alt=""><img class="hl-text" src="/img/ksv-logo-text-light.png" alt="">';
+  document.body.appendChild(box); document.body.classList.add("has-hero-logo");
   const mark = box.querySelector(".hl-mark"), text = box.querySelector(".hl-text");
   const hero = $(".hero"), photo = hero.querySelector(":scope > img"), dock = $("header.site .mark img");
   const HZ = .418;                         /* treeline sits 42% down the hero photo */
@@ -68,14 +72,15 @@ document.addEventListener("click", e => {
     const ar = (photo.naturalHeight && photo.naturalWidth) ? photo.naturalHeight / photo.naturalWidth : .75;
     const heroTop = hr.top + sy;
     const horizon = heroTop + (W * ar >= H ? (H - W * ar) / 2 + HZ * W * ar : HZ * H);
-    const top = heroTop + 96, avail = horizon - top - 12;
     const perW = MARK_AR * (1 + GAP) + TEXT_W * TEXT_AR;              /* logo height per px of monogram width */
-    const w = Math.max(130, Math.min(avail / perW, W * .62, 330));
+    const base = Math.max(130, Math.min((horizon - heroTop - 108) / perW, W * .62, 330));
+    const top = heroTop + 24, avail = horizon - 52 - top;              /* may rise into the clear header; stays well above the treeline */
+    const w = Math.min(base * 1.2, avail / perW, W * .7);
     const mh = w * MARK_AR, tw = w * TEXT_W, total = mh * (1 + GAP) + tw * TEXT_AR;
     const y = top + Math.max(0, (avail - total) / 2);
     s = { x: hr.left + (W - w) / 2, y, w, tx: hr.left + (W - tw) / 2, ty: y + mh * (1 + GAP), tw, sy: 0 };   /* positions as seen at the top of the page */
     mark.style.width = w + "px"; text.style.width = tw + "px";
-    frame(); box.classList.add("ready"); box.style.opacity = "";
+    frame(); box.classList.add("ready");
   }
   function frame() {
     ticking = false; if (!s) return;
