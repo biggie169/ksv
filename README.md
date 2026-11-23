@@ -1,21 +1,42 @@
-# King Solomon's Vineyard — website redesign (test site)
+# King Solomon's Vineyard: website
 
-Test build of the club-first redesign for kingsolomonsvineyard.com. It is a static site: one HTML page with hash routes (`#club`, `#wines`, `#story`, `#visit`) and images in `public/img/`.
+Static website for kingsolomonsvineyard.com, deployed to Cloudflare Workers as static assets. Every push to `main` deploys automatically.
 
-It is a **test site**. Prices, membership levels, perks, tasting notes and craft claims are drafts awaiting approval. The join form, the bag and the mailing-list forms are mockups and take no orders, payments or signups. Search engines are blocked by `robots.txt`, a `noindex` meta tag and an `X-Robots-Tag` header.
+## Pages
 
-## Run locally
+| Address | Source |
+|---|---|
+| `/` | `src/pages/home.html` |
+| `/club` | `src/pages/club.html` (The Keepers wine club) |
+| `/wines` | `src/pages/wines.html` (filters: `/wines?f=red`, `?f=white`, `?f=sets`, `?v=Merlot`) |
+| `/story` | `src/pages/story.html` |
+| `/policies` | `src/pages/policies.html` |
+| any unknown address | `src/pages/404.html` |
+
+## Editing
+
+1. Edit the sources:
+   - Page content: `src/pages/*.html`
+   - Header and menu: `src/header.html`. Footer and bag: `src/footer.html`
+   - Wines, prices, gift sets and club levels: `src/data.json` (feeds the pages and the product data search engines read)
+   - Page titles and search descriptions, redirects: the `PAGES` and `REDIRECTS` lists at the top of `build.py`
+   - Styles: `public/assets/site.css`. Behavior: `public/assets/site.js`
+2. Rebuild: `python3 build.py` (test build) or `python3 build.py --launch` (public build)
+3. Commit and push. Cloudflare deploys `public/`.
+
+Preview locally with Cloudflare's own server, which applies the redirects and headers:
 
 ```bash
 npx wrangler dev
 ```
 
-## Deploy
+## Test build vs. launch build
 
-The site deploys to Cloudflare Workers as static assets (see `wrangler.jsonc`). With the repository connected in Cloudflare (Workers & Pages → Create → Import a repository), every push to `main` deploys automatically. The deploy command is `npx wrangler deploy`, with no build step.
+`python3 build.py` produces the **test build**: every page carries `noindex`, `robots.txt` blocks all crawlers, and the ticker says "Test site". `python3 build.py --launch` produces the **launch build**: pages are indexable, `robots.txt` points to the sitemap, and the ticker shows sales messages. See `LAUNCH.md`.
 
-## Editing
+## Search engine setup included
 
-- Wine list and prices: the `WINES` array near the bottom of `public/index.html`.
-- Membership levels: the `TIERS` array in the same place.
-- Colors and fonts: the `:root` tokens at the top of the `<style>` block.
+- A title, description, canonical address and social-sharing image for each page
+- Structured data: the winery (address, phone, social profiles) on every page, the wines and gift sets as products on `/wines`, and the club FAQ on `/club`
+- `sitemap.xml`
+- `_redirects`: old Squarespace addresses (`/shop`, `/about`, `/vineyard`, `/visit`, `/contact`, `/cart`) redirect permanently to the new pages

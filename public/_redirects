@@ -1,0 +1,8 @@
+/shop /wines 301
+/shop/* /wines 301
+/cart /wines 301
+/about /story 301
+/vineyard /story 301
+/visit / 301
+/contact / 301
+/credits / 301
