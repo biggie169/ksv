@@ -64,39 +64,51 @@ document.addEventListener("click", e => {
   e.preventDefault(); t.scrollIntoView({ behavior: "smooth" });
 });
 
-/* ---------- homepage logo: full logo over the sky, monogram flies into the header on scroll ---------- */
+/* ---------- homepage logo: gold logo over the sky; the monogram turns ivory as it flies into the header ---------- */
 (() => {
   if (PAGE !== "home" || !$(".hero")) return;
   /* built here and placed at the end of <body>, never in the page flow above the hero */
   const box = document.createElement("div");
   box.className = "hero-logo"; box.setAttribute("aria-hidden", "true");
-  box.innerHTML = '<img class="hl-mark" src="/img/ksv-mark-light.svg" alt=""><img class="hl-text" src="/img/ksv-logo-text-light.svg" alt="">';
+  box.innerHTML = '<img class="hl-mark" src="/img/ksv-mark-gold.svg" alt=""><img class="hl-mark hl-mark-w" src="/img/ksv-mark-light.svg" alt=""><img class="hl-text" src="/img/ksv-logo-text-gold.svg" alt="">';
   document.body.appendChild(box); document.body.classList.add("has-hero-logo");
-  const mark = box.querySelector(".hl-mark"), text = box.querySelector(".hl-text");
-  const hero = $(".hero"), photo = hero.querySelector(":scope > img"), dock = $("header.site .mark img"), h1 = hero.querySelector("h1");
-  const HZ = .418;                         /* treeline sits 42% down the hero photo */
+  const marks = [...box.querySelectorAll(".hl-mark")], markW = box.querySelector(".hl-mark-w"), text = box.querySelector(".hl-text");
+  const hero = $(".hero"), photo = hero.querySelector(":scope > img"), dock = $("header.site .mark img");
+  const wrap = hero.querySelector(":scope > .wrap"), h1 = hero.querySelector("h1");
+  const HZ = .418, FOREST = .56;           /* in the photo: sky meets trees 42% down; the forest gives way to vines 56% down */
   const MARK_AR = 1780 / 2133, TEXT_W = 2331 / 2133, TEXT_AR = 766 / 2331, GAP = .03;
   let s = null, ticking = false;
   const lerp = (a, b, t) => a + (b - a) * t;
   const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  const pageTop = el => { let y = 0; for (; el; el = el.offsetParent) y += el.offsetTop; return y; };   /* unaffected by the fade-in */
   function layout() {
-    const sy = scrollY, hr = hero.getBoundingClientRect(), W = hero.clientWidth, H = hero.clientHeight;
+    const hr = hero.getBoundingClientRect(), W = hero.clientWidth, H = hero.clientHeight;
     if (!W || !H) return;
     const ar = (photo.naturalHeight && photo.naturalWidth) ? photo.naturalHeight / photo.naturalWidth : .75;
-    let heroTop = 0; for (let el = hero; el; el = el.offsetParent) heroTop += el.offsetTop;   /* page position, unaffected by the fade-in slide */
+    const heroTop = pageTop(hero), wide = W >= 900;
     const py = (parseFloat(getComputedStyle(photo).objectPosition.split(" ")[1]) || 50) / 100;
-    const horizon = heroTop + (W * ar >= H ? (H - W * ar) * py + HZ * W * ar : HZ * H);
+    const photoY = f => { const Wp = photo.clientWidth, Hp = photo.clientHeight;   /* page y of a point f of the way down the photo */
+      return heroTop + photo.offsetTop + (Wp * ar >= Hp ? (Hp - Wp * ar) * py + f * Wp * ar : f * Hp); };
+    /* desktop: the headline starts below the forest, by trimming the bottom space, then the type size if needed */
+    wrap.style.paddingBottom = ""; h1.style.fontSize = "";
+    if (wide) {
+      let need = photoY(FOREST) + 10 - pageTop(h1);
+      if (need > 0) {
+        const pb = parseFloat(getComputedStyle(wrap).paddingBottom), npb = Math.max(22, pb - need);
+        wrap.style.paddingBottom = npb + "px"; need -= pb - npb;
+        if (need > 0) { const fs = parseFloat(getComputedStyle(h1).fontSize); h1.style.fontSize = Math.max(38, fs - need / 2.2) + "px"; }
+      }
+    }
+    const horizon = photoY(HZ);
     hero.style.setProperty("--hz", (horizon - heroTop) + "px");   /* the moving sky fades out just above the treeline */
     const perW = MARK_AR * (1 + GAP) + TEXT_W * TEXT_AR;              /* logo height per px of monogram width */
-    const base = Math.max(130, Math.min((horizon - heroTop - 108) / perW, W * .62, 330));
-    const wide = W >= 900;                                             /* desktop gets a larger logo; phones keep their sizing */
-    const top = heroTop + (wide ? 10 : 24), avail = horizon - (wide ? 30 : 52) - top;   /* may rise into the clear header; stays above the treeline */
-    const h1Room = (h1 ? h1.getBoundingClientRect().top + scrollY : Infinity) - 28 - top;   /* never reach the headline */
-    const w = wide ? Math.min(avail / perW, h1Room / perW, W * .205, 360) : Math.min(base * 1.2, avail / perW, W * .7);
+    const top = heroTop + (wide ? 10 : 8), avail = horizon - 30 - top;   /* may rise into the clear header; stays above the treeline */
+    const h1Room = pageTop(h1) - 28 - top;                            /* never reach the headline */
+    const w = wide ? Math.min(avail / perW, h1Room / perW, W * .205, 360) : Math.min(avail / perW, h1Room / perW, W * .7);
     const mh = w * MARK_AR, tw = w * TEXT_W, total = mh * (1 + GAP) + tw * TEXT_AR;
     const y = top + Math.max(0, (Math.min(avail, h1Room) - total) / 2);
-    s = { x: hr.left + (W - w) / 2, y, w, tx: hr.left + (W - tw) / 2, ty: y + mh * (1 + GAP), tw, sy: 0 };   /* positions as seen at the top of the page */
-    mark.style.width = w + "px"; text.style.width = tw + "px";
+    s = { x: hr.left + (W - w) / 2, y, w, tx: hr.left + (W - tw) / 2, ty: y + mh * (1 + GAP), tw };   /* positions as seen at the top of the page */
+    marks.forEach(m => m.style.width = w + "px"); text.style.width = tw + "px";
     frame(); box.classList.add("ready");
   }
   function frame() {
@@ -104,9 +116,10 @@ document.addEventListener("click", e => {
     const sy = scrollY, D = Math.max(260, innerHeight * .5);
     const p = Math.min(1, Math.max(0, sy / D)), e = ease(p);
     const t = dock.getBoundingClientRect();
-    const x = lerp(s.x, t.left, e), y = lerp(s.y - s.sy, t.top, e), k = lerp(1, t.width / s.w, e);
-    mark.style.transform = `translate(${x}px,${y}px) scale(${k})`;
-    text.style.transform = `translate(${s.tx}px,${s.ty - s.sy - p * 70}px)`;
+    const x = lerp(s.x, t.left, e), y = lerp(s.y, t.top, e), k = lerp(1, t.width / s.w, e);
+    marks.forEach(m => m.style.transform = `translate(${x}px,${y}px) scale(${k})`);
+    markW.style.opacity = Math.min(1, Math.max(0, (p - .15) / .7));   /* gold to ivory while it travels */
+    text.style.transform = `translate(${s.tx}px,${s.ty - p * 70}px)`;
     text.style.opacity = Math.max(0, 1 - p / .35);
     document.body.classList.toggle("logo-docked", p >= 1);
     hdr.classList.toggle("solid", p >= 1);          /* black bar fades in only once the logo has landed */
@@ -116,7 +129,6 @@ document.addEventListener("click", e => {
   if (photo.complete) layout(); else photo.addEventListener("load", layout);
   addEventListener("load", layout);
   if (document.fonts) document.fonts.ready.then(layout);
-  $("main").addEventListener("animationend", layout);
 })();
 
 /* ---------- hero sky: drifts slowly; on desktop it also leans a few pixels toward the pointer ---------- */
@@ -174,19 +186,31 @@ if ($("#joinForm")) {
   });
 }
 
-/* ---------- membership calculator (club page): avg retail $52, member $39, Vineyard $30 incl. 1 bottle ---------- */
+/* ---------- "Love wine?" calculator (club page): bottles a month and a wine; compares a year at retail with the best-value level ---------- */
 if ($("#calcN")) {
+  const INCL = { vineyard: 1, reserve: 3, kings: 6 }, OFF = { vineyard: .75, reserve: .75, kings: .7 };
+  const buyable = WINES.filter(w => w.stock > 0);
+  $("#calcWine").innerHTML = buyable.map(w => `<option value="${w.id}">${w.name} · ${money(w.list)}</option>`).join("");
   let cn = 2;
+  const yr = n => "$" + Math.round(n).toLocaleString();
   const calc = () => {
-    const non = cn * 52 * 12, mem = (cn - 1) * 39 * 12 + 360, max = 6 * 52 * 12;
+    const w = WINES.find(x => x.id == $("#calcWine").value) || buyable[0];
+    const non = cn * w.list * 12;
+    /* illustrative: included bottles count toward the month's wine; extra bottles at that level's price */
+    const plans = TIERS.map(t => ({ t, cost: t.fee * 12 + Math.max(0, cn - INCL[t.key]) * w.list * OFF[t.key] * 12 }));
+    const best = plans.reduce((a, b) => b.cost < a.cost ? b : a);
+    const save = non - best.cost, pct = Math.round(save / non * 100);
     $("#calcN").textContent = `${cn} bottle${cn > 1 ? "s" : ""} / mo`;
-    $("#cNon").textContent = "$" + non.toLocaleString() + " / yr"; $("#cMem").textContent = "$" + mem.toLocaleString() + " / yr";
-    $("#fNon").style.width = (non / max * 100) + "%"; $("#fMem").style.width = (mem / max * 100) + "%";
-    const s = non - mem;
-    $("#cSave").textContent = s > 0 ? `Members save $${s.toLocaleString()} a year` : s === 0 ? "Membership breaks even" : `At one bottle a month, retail costs $${-s} less a year`;
+    $("#cNon").textContent = yr(non) + " / yr"; $("#cMem").textContent = yr(best.cost) + " / yr";
+    $("#cMemLbl").textContent = `As a ${best.t.name} Keeper, fee included`;
+    $("#fNon").style.width = "100%"; $("#fMem").style.width = Math.max(4, best.cost / non * 100) + "%";
+    $("#cSave").innerHTML = save > 0 ? `Keepers save ${yr(save)} a year <span class="pct">${pct}% less</span>` : "Membership breaks even";
+    const b = $("#cBuy"); b.dataset.join = best.t.key; b.href = `/club?tier=${best.t.key}#join`;
+    b.textContent = save > 0 ? `Join ${best.t.name} and save ${yr(save)} a year` : `Join ${best.t.name}`;
   };
   $("#calcMinus").onclick = () => { cn = Math.max(1, cn - 1); calc(); };
-  $("#calcPlus").onclick = () => { cn = Math.min(6, cn + 1); calc(); };
+  $("#calcPlus").onclick = () => { cn = Math.min(12, cn + 1); calc(); };
+  $("#calcWine").addEventListener("change", calc);
   calc();
 }
 

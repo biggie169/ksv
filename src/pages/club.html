@@ -3,7 +3,6 @@
     <div class="wrap">
       <h1>The <span class="hl kword">Keepers</span></h1>
       <blockquote class="verse">&ldquo;Solomon had a vineyard at Baalhamon; he let out the vineyard unto keepers.&rdquo;<cite>Song of Solomon 8:11</cite></blockquote>
-      <p class="lede">Our wine club takes its name from King Solomon's own vineyard. Keepers receive wine every month, member prices on everything, and first pick of every small-lot release.</p>
     </div>
   </div>
 
@@ -16,20 +15,22 @@
   <div class="band paper" style="padding-top:0;background:var(--stone)">
     <div class="wrap">
       <div class="calc">
-        <div>
-          <p class="eyebrow">Do the math</p>
-          <h3 style="margin-top:.6rem">Membership pays for itself</h3>
-          <p class="muted" style="margin-top:.8rem">Based on an average bottle of $52, or $39 for members. Vineyard membership is $30 a month with one bottle included.</p>
-          <div class="stepper" role="group" aria-label="Bottles per month">
-            <button type="button" id="calcMinus" aria-label="Fewer bottles">−</button>
-            <output id="calcN" aria-live="polite">2 bottles / mo</output>
-            <button type="button" id="calcPlus" aria-label="More bottles">+</button>
+        <div class="calc-in">
+          <h3>Love wine?</h3>
+          <div class="calc-ctl">
+            <div class="stepper" role="group" aria-label="Bottles per month">
+              <button type="button" id="calcMinus" aria-label="Fewer bottles">&minus;</button>
+              <output id="calcN" aria-live="polite">2 bottles / mo</output>
+              <button type="button" id="calcPlus" aria-label="More bottles">+</button>
+            </div>
+            <label class="sel"><span class="vh">Wine</span><select id="calcWine"></select></label>
           </div>
         </div>
         <div class="bars">
           <div class="bar"><div class="row"><span>Without membership</span><b id="cNon"></b></div><div class="track"><div class="fill" id="fNon"></div></div></div>
-          <div class="bar mem"><div class="row"><span>As a Vineyard member, fee included</span><b id="cMem"></b></div><div class="track"><div class="fill" id="fMem"></div></div></div>
+          <div class="bar mem"><div class="row"><span id="cMemLbl">As a Keeper</span><b id="cMem"></b></div><div class="track"><div class="fill" id="fMem"></div></div></div>
           <p class="save" id="cSave"></p>
+          <a class="btn btn-gold" id="cBuy" href="/club#join" data-join="vineyard">Join</a>
         </div>
       </div>
     </div>
@@ -62,6 +63,7 @@
 
   <div class="band paper">
     <div class="wrap">
+      <div class="faqwrap">
       <div class="head"><p class="eyebrow">Questions</p><h2>Membership FAQ</h2></div>
       <div class="faq">
         <details open><summary>Do I have to buy wine every month?</summary><p>No. Your included bottles arrive each month. Anything extra is optional, at member prices.</p></details>
@@ -69,6 +71,7 @@
         <details><summary>Can I cancel?</summary><p>Yes, anytime.</p></details>
         <details><summary>Where do you ship?</summary><p>To 37 states and Washington, D.C., free on orders over $50. An adult 21 or older must sign. Pickup at the vineyard is always free.</p></details>
         <details><summary>Can I give a membership as a gift?</summary><p>Yes. Choose a level and a number of months, and we'll include a welcome card.</p></details>
+      </div>
       </div>
     </div>
   </div>

@@ -476,3 +476,32 @@ form.f textarea{resize:vertical}
   animation:skyDrift 34s ease-in-out infinite alternate!important;will-change:transform}
 @keyframes skyDrift{from{transform:scale(1.05) translateX(-3.5%)}to{transform:scale(1.12) translateX(3.5%)}}
 .events-note a{white-space:nowrap}
+
+/* hero logo: gold, crossfading to ivory as it docks */
+.hero-logo .hl-mark-w{opacity:0;filter:none}
+.hero-logo img{filter:drop-shadow(0 2px 12px rgba(20,28,24,.45))}
+/* phones: a taller photo lowers the horizon so the logo can be larger */
+@media (max-width:899px){.hero > img{height:118%;bottom:auto}.hero .sky{bottom:calc(-6% - 18%)}}
+
+/* "Love wine?" calculator */
+.calc-in{display:grid;gap:1.2rem;align-content:start}
+.calc-in h3{font-size:clamp(1.8rem,3vw,2.3rem)}
+.calc-ctl{display:flex;flex-wrap:wrap;gap:.8rem;align-items:center}
+.calc-ctl .stepper{margin-top:0;border-radius:999px;border-color:var(--stone-2);background:var(--paper)}
+.calc-ctl .stepper output{font-family:var(--f-body);font-weight:500;font-size:.9rem;min-width:7rem}
+.calc-ctl .dd-btn{min-width:13rem}
+.bar .row b{font-family:var(--f-body);font-weight:600}
+.calc .save{font-family:var(--f-display);font-size:1.45rem;color:var(--claret);display:flex;align-items:baseline;flex-wrap:wrap;gap:.3rem .7rem}
+.calc .save .pct{font-family:var(--f-body);font-size:.8rem;font-weight:600;color:var(--ink);background:var(--gold);border-radius:999px;padding:.3rem .6rem;line-height:1}
+#cBuy{width:fit-content;margin-top:.2rem}
+
+/* FAQ: one column of questions; on desktop the heading sits beside them */
+.faq{grid-template-columns:1fr!important;gap:.6rem!important;max-width:46rem}
+.faq details{background:var(--paper);border-radius:12px;padding:1.05rem 1.3rem}
+.faq summary{display:flex;justify-content:space-between;align-items:center;gap:1rem}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{float:none;font-family:var(--f-body);font-size:1.3rem;line-height:1}
+.faq details p{margin-top:.5rem}
+.band.paper .faq details{background:var(--stone)}
+@media (min-width:900px){.faqwrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:3rem;align-items:start}.faqwrap .head{position:sticky;top:100px}}
+.hero-logo .hl-text{filter:drop-shadow(0 1px 2px rgba(20,28,24,.7)) drop-shadow(0 2px 14px rgba(20,28,24,.45))}
