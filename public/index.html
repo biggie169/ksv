@@ -714,11 +714,11 @@ const BASE=["25% off every bottle","First access to new releases","Members-only 
 const TIERS=[
  {key:"vineyard",name:"Vineyard",fee:20,flag:"",incl:"1 bottle a month",
   items:BASE.map(x=>[x,0])},
- {key:"cellar",name:"Cellar",fee:90,flag:"Most popular",incl:"3 bottles a month",
+ {key:"cellar",name:"Reserve",fee:90,flag:"Most popular",incl:"3 bottles a month",
   plus:"Everything in Vineyard, plus:",
   items:[["Choose your own bottles",1],["First pick of small-lot wines",1],["A bonus bottle on your birthday",1]]},
  {key:"kings",name:"King's Table",fee:190,flag:"",incl:"6 bottles a month",
-  plus:"Everything in Cellar, plus:",
+  plus:"Everything in Reserve, plus:",
   items:[["30% off every bottle",1],["Free shipping, always",1],["Reserved 20/20, a harvest dinner and more",1]]},
 ];
 const STATES=["AK","AZ","CO","DC","FL","GA","HI","IA","ID","IL","IN","KS","KY","LA","MA","MD","MN","MO","NC","ND","NE","NH","NM","NV","NY","OH","OK","OR","PA","SC","TN","TX","VT","WA","WI","WV","WY"];
@@ -733,7 +733,7 @@ function tierHTML(t){return `<article class="tier${t.flag?" feature":""}">${t.fl
   <ul>${t.items.map(([i,a])=>`<li${a?' class="add"':""}>${i}</li>`).join("")}</ul>
   <a class="btn ${t.flag?"btn-gold":"btn-ink"}" href="#club" data-join="${t.key}">Join ${t.name}</a></article>`}
 $$("[data-tiers]").forEach(el=>{el.innerHTML=TIERS.map(tierHTML).join("");
-  el.insertAdjacentHTML("afterend",`<div class="tier-nav"><div class="tier-dots">${TIERS.map((t,i)=>`<button type="button" aria-label="Show ${t.name}" data-i="${i}"></button>`).join("")}</div></div><a class="btn btn-gold tier-cta" href="#club" data-join="cellar">Join Cellar, our most popular</a>`);
+  el.insertAdjacentHTML("afterend",`<div class="tier-nav"><div class="tier-dots">${TIERS.map((t,i)=>`<button type="button" aria-label="Show ${t.name}" data-i="${i}"></button>`).join("")}</div></div><a class="btn btn-gold tier-cta" href="#club" data-join="cellar">Join Reserve, our most popular</a>`);
   const dots=[...el.nextElementSibling.querySelectorAll("button")];
   const upd=()=>{const mid=el.scrollLeft+el.clientWidth/2;let k=0,best=1e9;[...el.children].forEach((c,i)=>{const d=Math.abs(c.offsetLeft+c.offsetWidth/2-mid);if(d<best){best=d;k=i}});dots.forEach((d,i)=>d.classList.toggle("on",i===k))};
   el.addEventListener("scroll",upd,{passive:true});
