@@ -122,15 +122,15 @@ document.addEventListener("click", e => {
     if (Math.abs(pt - pc) < .002) pc = pt; else { ticking = true; requestAnimationFrame(frame); }
     const p = pc, e = ease(p);
     const t = dock.getBoundingClientRect();
-    const over = -Math.min(0, scrollY);                 /* pulled past the top: move with the page */
-    const x = lerp(s.x, t.left, e), y = lerp(s.y, t.top, e) + over, k = lerp(1, t.width / s.w, e);
+    box.classList.toggle("at-top", scrollY <= 0 && p < .002);   /* at the top it scrolls with the page, so a pull-down bounce carries it natively */
+    const x = lerp(s.x, t.left, e), y = lerp(s.y, t.top, e), k = lerp(1, t.width / s.w, e);
     marks.forEach(m => m.style.transform = `translate(${x}px,${y}px) scale(${k})`);
-    text.style.transform = `translate(${s.tx}px,${s.ty - p * 70 + over}px)`;
+    text.style.transform = `translate(${s.tx}px,${s.ty - p * 70}px)`;
     text.style.opacity = Math.max(0, 1 - p / .35);
     document.body.classList.toggle("logo-docked", p >= 1);
     hdr.classList.toggle("solid", p >= 1);          /* black bar fades in only once the logo has landed */
   }
-  addEventListener("scroll", () => { if (scrollY < 0) frame(); else if (!ticking) { ticking = true; requestAnimationFrame(frame); } }, { passive: true });
+  addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(frame); } }, { passive: true });
   addEventListener("resize", layout);
   if (photo.complete) layout(); else photo.addEventListener("load", layout);
   addEventListener("load", layout);
@@ -439,33 +439,18 @@ if ($("#eventForm")) $("#eventForm").addEventListener("submit", e => {
   const parts = card => ({ img: card.querySelector(".zoomable img"), name: card.querySelector("h3") });
   const fadeIns = () => [...ov.querySelectorAll(".pv-sub,.pv-desc,.tags,.pv-buy,.pv-x")];
 
-  async function open(card, item) {
+  function open(card, item) {
     if (busy) return; busy = true; cur = card;
-    const src = parts(card), sImg = src.img.getBoundingClientRect(), sName = src.name.getBoundingClientRect(), sCard = card.getBoundingClientRect();
     ov.innerHTML = html(item); ov.hidden = false; document.documentElement.classList.add("pv-lock");
-    const img = ov.querySelector(".pv-img img"), name = ov.querySelector(".pv-body h2");
-    try { await img.decode(); } catch (e) {}
-    const tImg = img.getBoundingClientRect(), tName = name.getBoundingClientRect();
-    card.classList.add("pv-source");
-    const o = { duration: MS, easing: EASE };
-    ov.querySelector(".pv-bg").animate([{ clipPath: clip(sCard) }, { clipPath: "inset(0px 0px 0px 0px round 0px)" }], o);
-    img.animate([{ transformOrigin: "0 0", transform: flip(sImg, tImg) }, { transformOrigin: "0 0", transform: "none" }], o);
-    name.animate([{ transformOrigin: "0 0", transform: flip(sName, tName) }, { transformOrigin: "0 0", transform: "none" }], o);
-    fadeIns().forEach((el, i) => el.animate([{ opacity: 0, transform: "translateY(10px)" }, { opacity: 1, transform: "none" }], { duration: 320, delay: MS * .55 + i * 35, easing: "ease-out", fill: "backwards" }));
-    setTimeout(() => { busy = false; ov.querySelector(".pv-x").focus({ preventScroll: true }); }, MS);
+    const r = card.getBoundingClientRect(), ox = r.left + r.width / 2, oy = r.top + r.height / 2;
+    ov.style.transformOrigin = `${ox}px ${oy}px`;
+    ov.animate([{ opacity: 0, transform: "scale(.94)" }, { opacity: 1, transform: "none" }], { duration: 380, easing: "cubic-bezier(.2,.8,.2,1)" })
+      .onfinish = () => { busy = false; ov.querySelector(".pv-x").focus({ preventScroll: true }); };
   }
   function close() {
-    if (ov.hidden || busy || !cur) return; busy = true;
-    const src = parts(cur), sImg = src.img.getBoundingClientRect(), sName = src.name.getBoundingClientRect(), sCard = cur.getBoundingClientRect();
-    const img = ov.querySelector(".pv-img img"), name = ov.querySelector(".pv-body h2");
-    const tImg = img.getBoundingClientRect(), tName = name.getBoundingClientRect();
-    const o = { duration: MS * .8, easing: "cubic-bezier(.4,0,.2,1)", fill: "forwards" };
-    fadeIns().forEach(el => el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 160, fill: "forwards" }));
-    img.animate([{ transformOrigin: "0 0", transform: "none" }, { transformOrigin: "0 0", transform: flip(sImg, tImg) }], o);
-    name.animate([{ transformOrigin: "0 0", transform: "none" }, { transformOrigin: "0 0", transform: flip(sName, tName) }], o);
-    ov.querySelector(".pv-bg").animate([{ clipPath: "inset(0px 0px 0px 0px round 0px)" }, { clipPath: clip(sCard) }], o).onfinish = () => {
-      cur.classList.remove("pv-source"); ov.hidden = true; ov.innerHTML = ""; document.documentElement.classList.remove("pv-lock"); busy = false;
-    };
+    if (ov.hidden || busy) return; busy = true;
+    ov.animate([{ opacity: 1, transform: "none" }, { opacity: 0, transform: "scale(.96)" }], { duration: 240, easing: "ease-in", fill: "forwards" })
+      .onfinish = () => { ov.hidden = true; ov.innerHTML = ""; ov.getAnimations().forEach(a => a.cancel()); document.documentElement.classList.remove("pv-lock"); busy = false; };
   }
   document.addEventListener("click", e => {
     const z = e.target.closest(".wcard .zoomable, .gift .zoomable"); if (!z) return;

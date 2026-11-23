@@ -717,3 +717,7 @@ body[data-page="club"] .pagehead h1{text-shadow:0 2px 24px rgba(0,0,0,.55)}
 .pview{isolation:isolate}
 .pv-source .zoomable img,.pv-source h3{visibility:hidden}
 .pv-body h2{width:fit-content}
+
+.hero-logo.at-top{position:absolute}
+.pview{background:var(--paper)}
+.pv-bg{display:none}
