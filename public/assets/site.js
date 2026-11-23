@@ -75,7 +75,7 @@ document.addEventListener("click", e => {
     const y = top + Math.max(0, (avail - total) / 2);
     s = { x: hr.left + (W - w) / 2, y, w, tx: hr.left + (W - tw) / 2, ty: y + mh * (1 + GAP), tw, sy: 0 };   /* positions as seen at the top of the page */
     mark.style.width = w + "px"; text.style.width = tw + "px";
-    frame(); box.classList.add("ready");
+    frame(); box.classList.add("ready"); box.style.opacity = "";
   }
   function frame() {
     ticking = false; if (!s) return;

@@ -8,7 +8,7 @@ Sources live in src/: layout chrome (header.html, footer.html), page bodies
 (pages/*.html) and src/data.json (wines, gift sets, club levels). Styles and
 scripts live directly in public/assets/. Re-run the build after editing src/.
 """
-import html, json, re, sys
+import hashlib, html, json, re, sys
 from datetime import date
 from pathlib import Path
 
@@ -17,6 +17,7 @@ SRC, OUT = ROOT / "src", ROOT / "public"
 LAUNCH = "--launch" in sys.argv
 BASE = "https://www.kingsolomonsvineyard.com"
 TODAY = date.today().isoformat()
+VER = {}
 
 PAGES = [
     dict(slug="home", file="index.html", path="/", priority="1.0",
@@ -119,7 +120,7 @@ def render(page):
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;1,6..96,400;1,6..96,500&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/site.css">
+<link rel="stylesheet" href="/assets/site.css?v={VER['site.css']}">
 {structured(page, body)}
 </head>
 <body data-page="{page['slug']}">
@@ -128,8 +129,8 @@ def render(page):
 <main>
 {body}</main>
 {footer}
-<script src="/assets/data.js"></script>
-<script src="/assets/site.js"></script>
+<script src="/assets/data.js?v={VER['data.js']}"></script>
+<script src="/assets/site.js?v={VER['site.js']}"></script>
 </body>
 </html>
 """
@@ -138,6 +139,8 @@ def render(page):
 def main():
     (OUT / "assets").mkdir(parents=True, exist_ok=True)
     (OUT / "assets" / "data.js").write_text("window.KSV=" + json.dumps(data, ensure_ascii=False) + ";\n")
+    for name in ("site.css", "site.js", "data.js"):   # content hash, so a deploy never mixes new pages with cached old assets
+        VER[name] = hashlib.md5((OUT / "assets" / name).read_bytes()).hexdigest()[:10]
     for page in PAGES:
         (OUT / page["file"]).write_text(render(page))
     not_found = dict(slug="404", file="404.html", path="/404", title="Page not found | King Solomon's Vineyard",
