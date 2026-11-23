@@ -26,7 +26,7 @@ PAGES = [
          image="/img/sunset.jpg"),
     dict(slug="club", file="club.html", path="/club", priority="0.9",
          title="The Keepers Wine Club | King Solomon's Vineyard",
-         desc="Join The Keepers, the King Solomon's Vineyard wine club. Wine every month, 25% off every bottle and first pick of small-lot releases, from $20 a month.",
+         desc="Join The Keepers, the King Solomon's Vineyard wine club. Wine every month, 25% off every bottle and first pick of small-lot releases, from $30 a month.",
          image="/img/ig-rows-clouds.jpg"),
     dict(slug="wines", file="wines.html", path="/wines", priority="0.9",
          title="Shop Pennsylvania Wines & Gift Sets | King Solomon's Vineyard",

@@ -157,11 +157,11 @@ if ($("#joinForm")) {
   });
 }
 
-/* ---------- membership calculator (club page): avg retail $52, member $39, Vineyard $20 incl. 1 bottle ---------- */
+/* ---------- membership calculator (club page): avg retail $52, member $39, Vineyard $30 incl. 1 bottle ---------- */
 if ($("#calcN")) {
   let cn = 2;
   const calc = () => {
-    const non = cn * 52 * 12, mem = (cn - 1) * 39 * 12 + 240, max = 6 * 52 * 12;
+    const non = cn * 52 * 12, mem = (cn - 1) * 39 * 12 + 360, max = 6 * 52 * 12;
     $("#calcN").textContent = `${cn} bottle${cn > 1 ? "s" : ""} / mo`;
     $("#cNon").textContent = "$" + non.toLocaleString() + " / yr"; $("#cMem").textContent = "$" + mem.toLocaleString() + " / yr";
     $("#fNon").style.width = (non / max * 100) + "%"; $("#fMem").style.width = (mem / max * 100) + "%";
@@ -175,10 +175,29 @@ if ($("#calcN")) {
 
 /* ---------- homepage: wine strip and gift sets ---------- */
 if ($("#homeStrip")) {
-  $("#homeStrip").innerHTML = [107195, 107194, 107190, 107188].map(id => {
-    const w = WINES.find(x => x.id === id);
-    return `<a href="/wines"><img src="/img/bottle_${w.id}.png" alt="${w.name}" loading="lazy"><h3>${w.name}</h3>${tags("Notes", w.notes.slice(0, 2), "", true)}${tags("Pairs with", w.pairs.slice(0, 2), " pair", true)}<span class="pp">${money(w.list)} <b>Members ${money(w.mem)}</b></span></a>`;
-  }).join("");
+  const strip = $("#homeStrip");
+  strip.innerHTML = WINES.map(w => `<article class="wcard">
+    <a class="wimg" href="/wines#w-${w.id}"><img src="/img/bottle_${w.id}.png" alt="${w.name}" loading="lazy"></a>
+    <h3><a href="/wines#w-${w.id}">${w.name}</a></h3>
+    ${tags("Notes", w.notes.slice(0, 2), "", true)}${tags("Pairs with", w.pairs.slice(0, 2), " pair", true)}
+    <div class="wfoot"><span class="pp">${money(w.list)} <b>Members ${money(w.mem)}</b></span>
+    ${w.stock > 0 ? `<button class="btn btn-ink" type="button" data-add="${w.id}">Add to bag</button>` : `<span class="sold">Sold out</span>`}</div>
+  </article>`).join("");
+  strip.insertAdjacentHTML("afterend", `<div class="car-nav"><button class="car-arrow" type="button" data-dir="-1" aria-label="Previous wines">&#8592;</button><div class="tier-dots">${WINES.map((w, i) => `<button type="button" aria-label="Show ${w.name}" data-i="${i}"></button>`).join("")}</div><button class="car-arrow" type="button" data-dir="1" aria-label="More wines">&#8594;</button></div>`);
+  const nav = strip.nextElementSibling, dots = [...nav.querySelectorAll(".tier-dots button")], cards = [...strip.children];
+  const pad = () => parseFloat(getComputedStyle(strip).scrollPaddingLeft) || 0;
+  const step = () => cards[1].offsetLeft - cards[0].offsetLeft;
+  const upd = () => {
+    const k = Math.round(strip.scrollLeft / step());
+    const end = strip.scrollLeft + strip.clientWidth >= strip.scrollWidth - 4;
+    dots.forEach((d, i) => d.classList.toggle("on", end ? i === cards.length - 1 || (i >= k && cards[i].offsetLeft - strip.scrollLeft < strip.clientWidth) : i === k));
+    nav.querySelector('[data-dir="-1"]').disabled = strip.scrollLeft < 4;
+    nav.querySelector('[data-dir="1"]').disabled = end;
+  };
+  strip.addEventListener("scroll", () => requestAnimationFrame(upd), { passive: true });
+  dots.forEach(d => d.onclick = () => strip.scrollTo({ left: cards[+d.dataset.i].offsetLeft - cards[0].offsetLeft, behavior: "smooth" }));
+  nav.querySelectorAll(".car-arrow").forEach(a => a.onclick = () => strip.scrollBy({ left: +a.dataset.dir * step(), behavior: "smooth" }));
+  upd(); addEventListener("resize", upd);
 }
 if ($("#homeGiftsGrid")) {
   $("#homeGiftsGrid").innerHTML = SETS.map(b => `<article class="gift"><div class="gimg"><img src="/img/${b.img}" alt="${b.name} gift set" loading="lazy"></div>
@@ -236,7 +255,7 @@ function renderBag() {
   }).join("") : `<p class="muted">Your bag is empty.</p>`;
   $("#bagCount").textContent = n; $("#bagCount").hidden = !n;
   $("#totals").innerHTML = n ? `<div class="r"><span>Retail total</span><b>${money(list)}</b></div><div class="r mem"><span>Member total</span><b>${money(mem)}</b></div>
-   <div class="nudge"><span>Members save <b style="color:var(--claret)">${money(list - mem)}</b> on this order. Membership starts at $20 a month, bottle included.</span><a class="btn btn-gold" href="${joinHref("vineyard")}" data-join="vineyard">Join and save</a><button class="btn btn-line" type="button" style="color:var(--ink)" id="checkoutBtn">Check out at retail price</button></div><p id="coMsg" class="muted" style="font-size:.82rem"></p>` : "";
+   <div class="nudge"><span>Members save <b style="color:var(--claret)">${money(list - mem)}</b> on this order. Membership starts at $30 a month, bottle included.</span><a class="btn btn-gold" href="${joinHref("vineyard")}" data-join="vineyard">Join and save</a><button class="btn btn-line" type="button" style="color:var(--ink)" id="checkoutBtn">Check out at retail price</button></div><p id="coMsg" class="muted" style="font-size:.82rem"></p>` : "";
 }
 function openBag(o) { $("#drawer").classList.toggle("open", o); $("#drawer").setAttribute("aria-hidden", !o); $("#scrim").hidden = !o; }
 document.addEventListener("click", e => {

@@ -206,7 +206,7 @@
   {
    "key": "vineyard",
    "name": "Vineyard",
-   "fee": 20,
+   "fee": 30,
    "flag": "",
    "incl": "1 bottle a month",
    "items": [
