@@ -147,7 +147,7 @@ main > section[data-page].on{display:block}
   .tiers{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:.9rem;margin-inline:calc(-1 * var(--gut-l)) calc(-1 * var(--gut-r));padding:.8rem var(--gut-r) .4rem var(--gut-l);scroll-padding-inline:var(--gut-l);scrollbar-width:none;-webkit-overflow-scrolling:touch}
   .tiers::-webkit-scrollbar{display:none}
   .tier{flex:0 0 82%;scroll-snap-align:center}
-  .tier-nav{display:flex;align-items:center;justify-content:space-between;margin-top:1rem;font-size:.85rem;color:var(--muted)}
+  .tier-nav{display:flex;align-items:center;justify-content:center;margin-top:1rem;font-size:.85rem;color:var(--muted)}
   .tier-cta{display:flex;width:100%;margin-top:1rem}
 }
 
@@ -763,7 +763,7 @@ function tierHTML(t){return `<article class="tier${t.flag?" feature":""}">${t.fl
   <ul>${t.items.map(([i,a])=>`<li${a?' class="add"':""}>${i}</li>`).join("")}</ul>
   <a class="btn ${t.flag?"btn-gold":"btn-ink"}" href="#club" data-join="${t.key}">Join ${t.name}</a></article>`}
 $$("[data-tiers]").forEach(el=>{el.innerHTML=TIERS.map(tierHTML).join("");
-  el.insertAdjacentHTML("afterend",`<div class="tier-nav"><div class="tier-dots">${TIERS.map((t,i)=>`<button type="button" aria-label="Show ${t.name}" data-i="${i}"></button>`).join("")}</div><span>Swipe to compare</span></div><a class="btn btn-gold tier-cta" href="#club" data-join="cellar">Join Cellar, our most popular</a>`);
+  el.insertAdjacentHTML("afterend",`<div class="tier-nav"><div class="tier-dots">${TIERS.map((t,i)=>`<button type="button" aria-label="Show ${t.name}" data-i="${i}"></button>`).join("")}</div></div><a class="btn btn-gold tier-cta" href="#club" data-join="cellar">Join Cellar, our most popular</a>`);
   const dots=[...el.nextElementSibling.querySelectorAll("button")];
   const upd=()=>{const mid=el.scrollLeft+el.clientWidth/2;let k=0,best=1e9;[...el.children].forEach((c,i)=>{const d=Math.abs(c.offsetLeft+c.offsetWidth/2-mid);if(d<best){best=d;k=i}});dots.forEach((d,i)=>d.classList.toggle("on",i===k))};
   el.addEventListener("scroll",upd,{passive:true});
