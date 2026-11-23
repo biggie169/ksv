@@ -16,21 +16,20 @@
     <div class="wrap">
       <div class="join join-art">
         <div>
-          <p class="eyebrow">Join</p>
-          <h3 style="margin-top:.6rem" id="joinTitle">Become a <span class="hl kword">Keeper</span></h3>
-          <p class="join-pitch">Keepers save 25% on every bottle, 30% at King's Table, with wine chosen for you each month.</p>
-          <p class="join-pitch">Most Keepers choose <b>Reserve</b>: three bottles a month and first pick of our small-lot wines.</p>
+          <h3 id="joinTitle">Join today</h3>
+          <p class="join-pitch">Wine chosen for you every month, and 25% off every bottle you add, 30% at King's Table. Most Keepers choose Reserve for first pick of our small-lot wines.</p>
         </div>
         <div id="joinWrap">
           <form class="f" id="joinForm" novalidate>
             <fieldset class="full tier-pick"><legend class="vh">Membership</legend><div class="tpick" id="tierOpts"></div></fieldset>
-            <label>First name<input id="jFirst" name="first" autocomplete="given-name" required></label>
-            <label>Last name<input id="jLast" name="last" autocomplete="family-name" required></label>
-            <label class="full">Email<input id="jEmail" name="email" type="email" autocomplete="email" required></label>
-            <label class="full">Date of birth<input id="jDob" name="dob" type="date" required></label>
-            <div class="full"><button class="btn btn-gold" type="submit">Continue to payment</button></div>
-            <p class="full ferr" id="jErr" aria-live="polite"></p>
-            <p class="full fnote">You must be 21 or older to join. Billed on the 1st of each month. Pause or cancel anytime.</p>
+            <label class="c-first">First name<input id="jFirst" name="first" autocomplete="given-name" required></label>
+            <label class="c-last">Last name<input id="jLast" name="last" autocomplete="family-name" required></label>
+            <label class="c-email">Email<input id="jEmail" name="email" type="email" autocomplete="email" required></label>
+            <div class="c-dob"><span class="flabel" id="dobLbl">Date of birth</span>
+              <button type="button" class="dob-btn" id="dobBtn" aria-labelledby="dobLbl" aria-haspopup="dialog">Select</button>
+              <input type="hidden" id="jDob" name="dob"></div>
+            <div class="full fsubmit"><button class="btn btn-gold" type="submit">Continue to payment</button></div>
+            <p class="full fnote" id="jNote" aria-live="polite">You must be 21 or older to join. Billed on the 1st of each month. Pause or cancel anytime.</p>
           </form>
         </div>
       </div>
@@ -45,7 +44,7 @@
         <details><summary>Do I have to buy wine every month?</summary><p>No. Your included bottles arrive each month. Anything extra is optional, at member prices.</p></details>
         <details><summary>Which wines get the member price?</summary><p>All of them, including new releases. Members also get first access to small lots like the 20/20 Red Blend.</p></details>
         <details><summary>Can I cancel?</summary><p>Yes, anytime.</p></details>
-        <details><summary>Where do you ship?</summary><p>To 36 states and Washington, D.C., free on orders over $50. An adult 21 or older must sign. Pickup at the vineyard is always free.</p></details>
+        <details><summary>Where do you ship?</summary><p>To 36 states and Washington, D.C., free on orders over $50. Pickup at the vineyard is always free.</p></details>
         <details><summary>Can I give a membership as a gift?</summary><p>Yes. Choose a level and a number of months, and we'll include a welcome card.</p></details>
       </div>
       </div>

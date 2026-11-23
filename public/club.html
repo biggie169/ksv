@@ -19,9 +19,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;1,6..96,400;1,6..96,500&family=Instrument+Sans:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="/assets/site.css?v=91b7f3334f">
+<link rel="stylesheet" href="/assets/site.css?v=3d273cfecf">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Winery", "@id": "https://www.kingsolomonsvineyard.com/#winery", "name": "King Solomon's Vineyard", "url": "https://www.kingsolomonsvineyard.com/", "logo": "https://www.kingsolomonsvineyard.com/img/logo-gold.png", "image": "https://www.kingsolomonsvineyard.com/img/sunset.jpg", "description": "Family-owned estate vineyard in Schuylkill County, Pennsylvania, growing European vinifera since 2010.", "foundingDate": "2009", "telephone": "+1-570-990-5243", "email": "info@kingsolomonsvineyard.com", "address": {"@type": "PostalAddress", "streetAddress": "81 Hemlock Dr.", "addressLocality": "Pottsville", "addressRegion": "PA", "postalCode": "17901", "addressCountry": "US"}, "sameAs": ["https://www.instagram.com/kingsolomonsvineyard/", "https://www.facebook.com/KingSolomonsVineyard"]}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Do I have to buy wine every month?", "acceptedAnswer": {"@type": "Answer", "text": "No. Your included bottles arrive each month. Anything extra is optional, at member prices."}}, {"@type": "Question", "name": "Which wines get the member price?", "acceptedAnswer": {"@type": "Answer", "text": "All of them, including new releases. Members also get first access to small lots like the 20/20 Red Blend."}}, {"@type": "Question", "name": "Can I cancel?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, anytime."}}, {"@type": "Question", "name": "Where do you ship?", "acceptedAnswer": {"@type": "Answer", "text": "To 36 states and Washington, D.C., free on orders over $50. An adult 21 or older must sign. Pickup at the vineyard is always free."}}, {"@type": "Question", "name": "Can I give a membership as a gift?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Choose a level and a number of months, and we'll include a welcome card."}}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Do I have to buy wine every month?", "acceptedAnswer": {"@type": "Answer", "text": "No. Your included bottles arrive each month. Anything extra is optional, at member prices."}}, {"@type": "Question", "name": "Which wines get the member price?", "acceptedAnswer": {"@type": "Answer", "text": "All of them, including new releases. Members also get first access to small lots like the 20/20 Red Blend."}}, {"@type": "Question", "name": "Can I cancel?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, anytime."}}, {"@type": "Question", "name": "Where do you ship?", "acceptedAnswer": {"@type": "Answer", "text": "To 36 states and Washington, D.C., free on orders over $50. Pickup at the vineyard is always free."}}, {"@type": "Question", "name": "Can I give a membership as a gift?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Choose a level and a number of months, and we'll include a welcome card."}}]}</script>
 </head>
 <body data-page="club">
 <div class="ticker" id="ticker" role="note" aria-label="Test site. Free shipping on orders over $50." data-msgs="[&quot;Test site&quot;, &quot;Free shipping on orders over $50&quot;]"><span id="tickText" aria-hidden="true"></span></div>
@@ -67,21 +67,20 @@
     <div class="wrap">
       <div class="join join-art">
         <div>
-          <p class="eyebrow">Join</p>
-          <h3 style="margin-top:.6rem" id="joinTitle">Become a <span class="hl kword">Keeper</span></h3>
-          <p class="join-pitch">Keepers save 25% on every bottle, 30% at King's Table, with wine chosen for you each month.</p>
-          <p class="join-pitch">Most Keepers choose <b>Reserve</b>: three bottles a month and first pick of our small-lot wines.</p>
+          <h3 id="joinTitle">Join today</h3>
+          <p class="join-pitch">Wine chosen for you every month, and 25% off every bottle you add, 30% at King's Table. Most Keepers choose Reserve for first pick of our small-lot wines.</p>
         </div>
         <div id="joinWrap">
           <form class="f" id="joinForm" novalidate>
             <fieldset class="full tier-pick"><legend class="vh">Membership</legend><div class="tpick" id="tierOpts"></div></fieldset>
-            <label>First name<input id="jFirst" name="first" autocomplete="given-name" required></label>
-            <label>Last name<input id="jLast" name="last" autocomplete="family-name" required></label>
-            <label class="full">Email<input id="jEmail" name="email" type="email" autocomplete="email" required></label>
-            <label class="full">Date of birth<input id="jDob" name="dob" type="date" required></label>
-            <div class="full"><button class="btn btn-gold" type="submit">Continue to payment</button></div>
-            <p class="full ferr" id="jErr" aria-live="polite"></p>
-            <p class="full fnote">You must be 21 or older to join. Billed on the 1st of each month. Pause or cancel anytime.</p>
+            <label class="c-first">First name<input id="jFirst" name="first" autocomplete="given-name" required></label>
+            <label class="c-last">Last name<input id="jLast" name="last" autocomplete="family-name" required></label>
+            <label class="c-email">Email<input id="jEmail" name="email" type="email" autocomplete="email" required></label>
+            <div class="c-dob"><span class="flabel" id="dobLbl">Date of birth</span>
+              <button type="button" class="dob-btn" id="dobBtn" aria-labelledby="dobLbl" aria-haspopup="dialog">Select</button>
+              <input type="hidden" id="jDob" name="dob"></div>
+            <div class="full fsubmit"><button class="btn btn-gold" type="submit">Continue to payment</button></div>
+            <p class="full fnote" id="jNote" aria-live="polite">You must be 21 or older to join. Billed on the 1st of each month. Pause or cancel anytime.</p>
           </form>
         </div>
       </div>
@@ -96,7 +95,7 @@
         <details><summary>Do I have to buy wine every month?</summary><p>No. Your included bottles arrive each month. Anything extra is optional, at member prices.</p></details>
         <details><summary>Which wines get the member price?</summary><p>All of them, including new releases. Members also get first access to small lots like the 20/20 Red Blend.</p></details>
         <details><summary>Can I cancel?</summary><p>Yes, anytime.</p></details>
-        <details><summary>Where do you ship?</summary><p>To 36 states and Washington, D.C., free on orders over $50. An adult 21 or older must sign. Pickup at the vineyard is always free.</p></details>
+        <details><summary>Where do you ship?</summary><p>To 36 states and Washington, D.C., free on orders over $50. Pickup at the vineyard is always free.</p></details>
         <details><summary>Can I give a membership as a gift?</summary><p>Yes. Choose a level and a number of months, and we'll include a welcome card.</p></details>
       </div>
       </div>
@@ -126,6 +125,6 @@
 </aside>
 
 <script src="/assets/data.js?v=46808a6260"></script>
-<script src="/assets/site.js?v=d007b92944"></script>
+<script src="/assets/site.js?v=1aa24993e0"></script>
 </body>
 </html>

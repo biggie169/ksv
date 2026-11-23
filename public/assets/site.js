@@ -180,12 +180,52 @@ if ($("#joinForm")) {
     e.preventDefault(); const r = $("#t-" + j.dataset.join); if (r) r.checked = true;
     openBag(false); $("#join").scrollIntoView({ behavior: "smooth" });
   });
+  const NOTE = $("#jNote").textContent;
+  const err = m => { $("#jNote").textContent = m; $("#jNote").classList.add("is-err"); };
+  $("#joinForm").addEventListener("input", () => { $("#jNote").textContent = NOTE; $("#jNote").classList.remove("is-err"); });
+
+  /* date of birth: brand-styled calendar; nobody under 21 can be picked */
+  (() => {
+    const btn = $("#dobBtn"), out = $("#jDob"), MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    const now = new Date(), max = new Date(now.getFullYear() - 21, now.getMonth(), now.getDate());
+    let y = max.getFullYear() - 9, m = 0, picked = null;
+    const pop = document.createElement("div"); pop.className = "dob-pop"; pop.hidden = true; pop.setAttribute("role", "dialog"); pop.setAttribute("aria-label", "Choose your date of birth");
+    btn.after(pop);
+    const fmt = d => `${String(d.getMonth() + 1).padStart(2, "0")}/${String(d.getDate()).padStart(2, "0")}/${d.getFullYear()}`;
+    function draw() {
+      if (y > max.getFullYear() || (y === max.getFullYear() && m > max.getMonth())) { y = max.getFullYear(); m = max.getMonth(); }
+      const first = new Date(y, m, 1).getDay(), days = new Date(y, m + 1, 0).getDate();
+      const years = []; for (let k = max.getFullYear(); k >= max.getFullYear() - 90; k--) years.push(k);
+      let cells = "";
+      for (let i = 0; i < first; i++) cells += "<span></span>";
+      for (let d = 1; d <= days; d++) {
+        const dt = new Date(y, m, d), off = dt > max, on = picked && +dt === +picked;
+        cells += `<button type="button" data-d="${d}"${off ? " disabled" : ""}${on ? ' class="on"' : ""}>${d}</button>`;
+      }
+      pop.innerHTML = `<div class="dp-head"><select aria-label="Month">${MONTHS.map((n, i) => `<option value="${i}"${i === m ? " selected" : ""}>${n}</option>`).join("")}</select>
+        <select aria-label="Year">${years.map(k => `<option${k === y ? " selected" : ""}>${k}</option>`).join("")}</select></div>
+        <div class="dp-dow"><span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span></div><div class="dp-grid">${cells}</div>
+        <p class="dp-note">Keepers must be 21 or older.</p>`;
+      const [ms, ys] = pop.querySelectorAll("select");
+      ms.onchange = () => { m = +ms.value; draw(); }; ys.onchange = () => { y = +ys.value; draw(); };
+    }
+    pop.addEventListener("click", e => {
+      const b = e.target.closest("button[data-d]"); if (!b || b.disabled) return;
+      picked = new Date(y, m, +b.dataset.d); out.value = `${y}-${String(m + 1).padStart(2, "0")}-${b.dataset.d.padStart(2, "0")}`;
+      btn.textContent = fmt(picked); btn.classList.add("set"); pop.hidden = true;
+      $("#jNote").textContent = NOTE; $("#jNote").classList.remove("is-err");
+    });
+    btn.onclick = () => { if (pop.hidden) { draw(); pop.hidden = false; } else pop.hidden = true; };
+    document.addEventListener("click", e => { if (!pop.hidden && !e.target.closest(".c-dob")) pop.hidden = true; });
+    document.addEventListener("keydown", e => { if (e.key === "Escape") pop.hidden = true; });
+  })();
+
   $("#joinForm").addEventListener("submit", e => {
     e.preventDefault();
     const f = $("#jFirst").value.trim(), em = $("#jEmail").value.trim(), dob = $("#jDob").value;
-    if (!f || !/^\S+@\S+\.\S+$/.test(em)) { $("#jErr").textContent = "Enter your first name and a valid email."; return; }
-    if (!dob) { $("#jErr").textContent = "Enter your date of birth."; return; }
-    if ((Date.now() - new Date(dob)) / 31557600000 < 21) { $("#jErr").textContent = "Members must be 21 or older."; return; }
+    if (!f || !/^\S+@\S+\.\S+$/.test(em)) { err("Enter your first name and a valid email."); return; }
+    if (!dob) { err("Select your date of birth."); return; }
+    if ((Date.now() - new Date(dob)) / 31557600000 < 21) { err("Keepers must be 21 or older."); return; }
     const t = TIERS.find(x => x.key === (document.querySelector('input[name="tier"]:checked') || {}).value) || popular;
     $("#joinWrap").innerHTML = `<div class="ok"><p class="eyebrow">Test site</p><h3 style="margin-top:.4rem">Welcome to ${t.name}, ${f.replace(/[<>&]/g, "")}.</h3><p style="margin-top:.6rem;color:var(--muted-dk)">On the live site this step opens secure payment for $${t.fee} a month. Nothing was charged and nothing was saved.</p></div>`;
   });
@@ -196,7 +236,7 @@ if ($("#joinForm")) {
 if ($("#homeStrip")) {
   const strip = $("#homeStrip");
   strip.innerHTML = WINES.map(w => `<article class="wcard">
-    <button type="button" class="wimg zoomable" data-zoom="/img/bottle_${w.id}.png" aria-label="Enlarge ${w.name}"><img src="/img/bottle_${w.id}.png" alt="${w.name}" loading="lazy"></button>
+    <button type="button" class="wimg zoomable" data-item="${w.id}" data-zoom="/img/bottle_${w.id}.png" aria-label="View ${w.name}"><img src="/img/bottle_${w.id}.png" alt="${w.name}" loading="lazy"></button>
     <h3>${w.name}</h3>
     ${tags("Notes", w.notes.slice(0, 2), "", true)}${tags("Pairs with", w.pairs.slice(0, 2), " pair", true)}
     <div class="wfoot"><span class="pp">${money(w.list)} <b>${kp(w.mem)}</b></span>
@@ -242,7 +282,7 @@ if ($("#homeStrip")) {
   upd(); addEventListener("resize", upd);
 }
 if ($("#homeGiftsGrid")) {
-  $("#homeGiftsGrid").innerHTML = SETS.map(b => `<article class="gift"><span class="savebadge">Save ${money(b.value - b.list)}</span><button type="button" class="gimg zoomable" data-zoom="/img/${b.img}" aria-label="Enlarge ${b.name}"><img src="/img/${b.img}" alt="${b.name} gift set" loading="lazy"></button>
+  $("#homeGiftsGrid").innerHTML = SETS.map(b => `<article class="gift"><span class="savebadge">Save ${money(b.value - b.list)}</span><button type="button" class="gimg zoomable" data-item="${b.id}" data-zoom="/img/${b.img}" aria-label="View ${b.name}"><img src="/img/${b.img}" alt="${b.name} gift set" loading="lazy"></button>
   <h3>${b.name}</h3>
   <div class="row"><div class="pr"><span class="now">${money(b.list)}</span><s>${money(b.value)}</s><b>${kp(b.mem)}</b></div>
   <button class="btn btn-gold" type="button" data-add="${b.id}">Add to bag</button></div></article>`).join("");
@@ -257,6 +297,7 @@ $$(".sel select").forEach(sel => {
   btn.setAttribute("aria-haspopup", "listbox"); btn.setAttribute("aria-expanded", "false");
   const list = document.createElement("ul"); list.className = "dd-list"; list.setAttribute("role", "listbox"); list.hidden = true;
   wrap.append(btn, list); sel.tabIndex = -1; sel.setAttribute("aria-hidden", "true");
+  wrap.addEventListener("click", e => { if (e.target !== sel) e.preventDefault(); });   /* a <label> would otherwise open the native picker */
   const build = () => { list.innerHTML = [...sel.options].map((o, i) => `<li role="option" data-i="${i}" tabindex="-1"${o.selected ? ' aria-selected="true"' : ""}>${o.textContent}</li>`).join(""); };
   const sync = () => { btn.textContent = sel.options[sel.selectedIndex] ? sel.options[sel.selectedIndex].textContent : ""; build(); };
   const open = o => {
@@ -315,7 +356,7 @@ if ($("#ledger")) {
   $$(".chip").forEach(c => c.addEventListener("click", () => { shop.f = c.dataset.f; if (shop.f === "sets") { shop.v = ""; $("#fVar").value = ""; } syncChips(); syncUrl(); render(); }));
   $("#fVar").addEventListener("change", e => { shop.v = e.target.value; if (shop.v && shop.f === "sets") shop.f = "all"; syncChips(); syncUrl(); render(); });
   $("#fSort").addEventListener("change", e => { shop.s = e.target.value; render(); });
-  $("#kkey").innerHTML = `${KMARK} Keeper price. <a href="/club">Become a Keeper</a> and save 25% on every bottle.`;
+  $("#kkey").innerHTML = `${KMARK} <span><a href="/club">Become a Keeper</a> and save 25% or more.</span>`;
   syncChips(); render();
 }
 
@@ -355,7 +396,7 @@ if ($("#eventForm")) $("#eventForm").addEventListener("submit", e => {
   const states = (window.KSV.states || []).slice().sort((a, b) => (NAMES[a] || a).localeCompare(NAMES[b] || b));
   const walker = document.createTreeWalker($("main"), NodeFilter.SHOW_TEXT);
   const hits = []; while (walker.nextNode()) if (/\d+ states/.test(walker.currentNode.nodeValue)) hits.push(walker.currentNode);
-  if (!hits.length) return;
+  if (!hits.length && !$(".states-link")) return;
   hits.forEach(node => {
     const m = node.nodeValue.match(/\d+ states/), before = node.nodeValue.slice(0, m.index), after = node.nodeValue.slice(m.index + m[0].length);
     const btn = document.createElement("button"); btn.type = "button"; btn.className = "states-link"; btn.textContent = m[0];
@@ -363,7 +404,7 @@ if ($("#eventForm")) $("#eventForm").addEventListener("submit", e => {
   });
   const dlg = document.createElement("dialog"); dlg.className = "states-dlg"; dlg.setAttribute("aria-label", "Where we ship");
   dlg.innerHTML = `<div class="sd-head"><h2>Where we ship</h2><button type="button" class="sd-x" aria-label="Close">&times;</button></div>
-    <p class="sd-sub">${states.length - 1} states and Washington, D.C. An adult 21 or older must sign for delivery.</p>
+    <p class="sd-sub">${states.length - 1} states and Washington, D.C.</p>
     <ul class="sd-grid">${states.map(s => `<li><b>${s}</b><span>${NAMES[s] || s}</span></li>`).join("")}</ul>`;
   document.body.appendChild(dlg);
   document.addEventListener("click", e => { if (e.target.closest(".states-link")) { e.preventDefault(); dlg.showModal(); } });
@@ -371,7 +412,51 @@ if ($("#eventForm")) $("#eventForm").addEventListener("submit", e => {
   dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
 })();
 
-/* ---------- click a bottle or gift box to see it larger ---------- */
+/* ---------- homepage: a card grows into a full-screen product view ---------- */
+(() => {
+  if (!$("#homeStrip") && !$("#homeGiftsGrid")) return;
+  const ov = document.createElement("div"); ov.className = "pview"; ov.hidden = true;
+  ov.setAttribute("role", "dialog"); ov.setAttribute("aria-modal", "true");
+  document.body.appendChild(ov);
+  let from = null;
+  const html = x => {
+    const set = !!x.items;
+    const img = set ? `/img/${x.img}` : `/img/bottle_${x.id}.png`;
+    const meta = set ? `<p class="pv-sub">${x.size} gift set</p>` : (x.grape !== x.name ? `<p class="pv-sub">${x.grape}</p>` : "");
+    const chips = set ? tags("In the box", x.items) : tags("Notes", x.notes) + tags("Pairs with", x.pairs, " pair");
+    const price = set ? `<div class="list"><s>${money(x.value)}</s> ${money(x.list)}</div>` : `<div class="list">${money(x.list)}</div>`;
+    const buy = (set || x.stock > 0) ? `<button class="btn btn-ink" type="button" data-add="${x.id}">Add to bag</button>` : `<span class="sold">Sold out</span>`;
+    return `<button type="button" class="pv-x" aria-label="Close">&times;</button>
+      <div class="pv-in"><div class="pv-img"><img src="${img}" alt="${x.name}"></div>
+      <div class="pv-body"><h2>${x.name}</h2>${meta}<p class="pv-desc">${x.desc}</p>${chips}
+      <div class="pv-buy"><div class="prices">${price}<div class="mem">${kp(x.mem)}</div></div>${buy}</div></div></div>`;
+  };
+  const rectClip = r => `inset(${r.top}px ${innerWidth - r.right}px ${innerHeight - r.bottom}px ${r.left}px round 4px)`;
+  function open(card, item) {
+    from = card; ov.innerHTML = html(item); ov.hidden = false; document.documentElement.classList.add("pv-lock");
+    const r = card.getBoundingClientRect();
+    ov.animate([{ clipPath: rectClip(r) }, { clipPath: "inset(0px 0px 0px 0px round 0px)" }], { duration: 520, easing: "cubic-bezier(.2,.75,.2,1)" });
+    ov.querySelector(".pv-in").animate([{ opacity: 0, transform: "translateY(14px)" }, { opacity: 1, transform: "none" }], { duration: 420, delay: 160, easing: "ease-out", fill: "backwards" });
+    ov.querySelector(".pv-x").focus();
+  }
+  function close() {
+    if (ov.hidden) return;
+    const r = from.getBoundingClientRect();
+    ov.animate([{ clipPath: "inset(0px 0px 0px 0px round 0px)" }, { clipPath: rectClip(r) }], { duration: 380, easing: "cubic-bezier(.4,0,.2,1)" })
+      .onfinish = () => { ov.hidden = true; ov.innerHTML = ""; document.documentElement.classList.remove("pv-lock"); };
+  }
+  document.addEventListener("click", e => {
+    const z = e.target.closest(".wcard .zoomable, .gift .zoomable"); if (!z) return;
+    if (z.closest(".strip.dragging")) return;
+    e.stopImmediatePropagation();
+    const card = z.closest(".wcard, .gift"), id = z.dataset.item;
+    const item = ITEMS.find(x => String(x.id) === id); if (item) open(card, item);
+  }, true);
+  ov.addEventListener("click", e => { if (e.target.closest(".pv-x")) close(); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") close(); });
+})();
+
+/* ---------- wines page: click a bottle or gift box to see it larger ---------- */
 (() => {
   const box = document.createElement("dialog"); box.className = "zoom-dlg"; box.setAttribute("aria-label", "Enlarged image");
   box.innerHTML = '<button type="button" class="zx" aria-label="Close">&times;</button><img alt="">';
@@ -381,6 +466,7 @@ if ($("#eventForm")) $("#eventForm").addEventListener("submit", e => {
     const z = e.target.closest(".zoomable"); if (!z) return;
     if (z.closest(".strip.dragging")) return;
     img.src = z.dataset.zoom; img.alt = z.querySelector("img").alt; box.showModal();
+    img.animate([{ transform: "scale(.55)", opacity: 0 }, { transform: "none", opacity: 1 }], { duration: 380, easing: "cubic-bezier(.2,.75,.2,1)" });
   });
   box.addEventListener("click", () => box.close());
 })();
