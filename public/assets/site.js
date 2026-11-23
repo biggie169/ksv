@@ -28,7 +28,8 @@ $("main").classList.add("page-enter");
 
 /* ---------- header: clear over the hero, solid once scrolled ---------- */
 const hdr = $("header.site");
-const setSolid = () => hdr.classList.toggle("solid", window.scrollY > 30);
+/* on the homepage the logo flight decides when the header turns solid (see below) */
+const setSolid = () => { if (!document.body.classList.contains("has-hero-logo")) hdr.classList.toggle("solid", window.scrollY > 30); };
 addEventListener("scroll", setSolid, { passive: true }); setSolid();
 
 /* ---------- menu ---------- */
@@ -92,6 +93,7 @@ document.addEventListener("click", e => {
     text.style.transform = `translate(${s.tx}px,${s.ty - s.sy - p * 70}px)`;
     text.style.opacity = Math.max(0, 1 - p / .35);
     document.body.classList.toggle("logo-docked", p >= 1);
+    hdr.classList.toggle("solid", p >= 1);          /* black bar fades in only once the logo has landed */
   }
   addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(frame); } }, { passive: true });
   addEventListener("resize", layout);
