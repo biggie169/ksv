@@ -129,6 +129,7 @@ main > section[data-page].on{display:block}
 .tier .incl{font-family:var(--f-display);font-size:1.3rem;line-height:1.3;padding-block:.2rem}
 .tier li.add{color:var(--claret);font-weight:500}
 .tier li.add::before{content:"+";background:none;width:auto;height:auto;top:0;left:.05rem;color:var(--claret);font-weight:600}
+.tier .plus{font-size:.9rem;color:var(--muted);margin:0 0 -.35rem}
 .legend{margin-top:1rem;font-size:.88rem;color:var(--muted)}
 .legend b{color:var(--claret);font-weight:600}
 .heritage{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.45fr);gap:clamp(1.25rem,4vw,4.5rem);align-items:start}
@@ -744,9 +745,11 @@ const TIERS=[
  {key:"vineyard",name:"Vineyard",fee:20,flag:"",incl:"1 bottle a month",
   items:BASE.map(x=>[x,0])},
  {key:"cellar",name:"Cellar",fee:90,flag:"Most popular",incl:"3 bottles a month",
-  items:[...BASE.map(x=>[x,0]),["Choose your own bottles",1],["First pick of small-lot wines",1],["Free tastings for two",1]]},
+  plus:"Everything in Vineyard, plus:",
+  items:[["Choose your own bottles",1],["First pick of small-lot wines",1],["Free tastings for two",1]]},
  {key:"kings",name:"King's Table",fee:190,flag:"",incl:"6 bottles a month",
-  items:[["30% off every bottle",1],...BASE.slice(1).map(x=>[x,0]),["Choose your own bottles",0],["First pick of small-lot wines",0],["Free tastings for two",0],["Free shipping, always",1],["Reserved 20/20 Red Blend",1],["Harvest dinner for two",1]]},
+  plus:"Everything in Cellar, plus:",
+  items:[["30% off every bottle",1],["Free shipping, always",1],["Reserved 20/20, a harvest dinner and more",1]]},
 ];
 const STATES=["AK","AZ","CO","DC","FL","GA","HI","IA","ID","IL","IN","KS","KY","LA","MA","MD","MN","MO","NC","ND","NE","NH","NM","NV","NY","OH","OK","OR","PA","SC","TN","TX","VT","WA","WI","WV","WY"];
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
@@ -756,11 +759,11 @@ let selectedTier="cellar";
 /* tiers */
 function tierHTML(t){return `<article class="tier${t.flag?" feature":""}">${t.flag?`<span class="flag">${t.flag}</span>`:""}
   <h3>${t.name}</h3><div class="price"><b>$${t.fee}</b><span>/ month</span></div>
-  <p class="incl">${t.incl}</p>
+  <p class="incl">${t.incl}</p>${t.plus?`<p class="plus">${t.plus}</p>`:""}
   <ul>${t.items.map(([i,a])=>`<li${a?' class="add"':""}>${i}</li>`).join("")}</ul>
   <a class="btn ${t.flag?"btn-gold":"btn-ink"}" href="#club" data-join="${t.key}">Join ${t.name}</a></article>`}
 $$("[data-tiers]").forEach(el=>{el.innerHTML=TIERS.map(tierHTML).join("");
-  el.insertAdjacentHTML("afterend",`<div class="tier-nav"><div class="tier-dots">${TIERS.map((t,i)=>`<button type="button" aria-label="Show ${t.name}" data-i="${i}"></button>`).join("")}</div><span>Swipe to compare</span></div><a class="btn btn-gold tier-cta" href="#club" data-join="cellar">Join Cellar, our most popular</a><p class="legend"><b>+</b> New at this level</p>`);
+  el.insertAdjacentHTML("afterend",`<div class="tier-nav"><div class="tier-dots">${TIERS.map((t,i)=>`<button type="button" aria-label="Show ${t.name}" data-i="${i}"></button>`).join("")}</div><span>Swipe to compare</span></div><a class="btn btn-gold tier-cta" href="#club" data-join="cellar">Join Cellar, our most popular</a>`);
   const dots=[...el.nextElementSibling.querySelectorAll("button")];
   const upd=()=>{const mid=el.scrollLeft+el.clientWidth/2;let k=0,best=1e9;[...el.children].forEach((c,i)=>{const d=Math.abs(c.offsetLeft+c.offsetWidth/2-mid);if(d<best){best=d;k=i}});dots.forEach((d,i)=>d.classList.toggle("on",i===k))};
   el.addEventListener("scroll",upd,{passive:true});
