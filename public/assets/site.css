@@ -745,3 +745,4 @@ body[data-page="club"] .pagehead h1{text-shadow:0 2px 24px rgba(0,0,0,.55)}
 .trade-strip p{margin:0;font-size:1.05rem;display:flex;align-items:baseline;gap:.4rem .8rem;flex-wrap:wrap}
 .trade-strip .eyebrow{color:var(--gold)}
 @media (max-width:760px) and (max-height:700px){.pv-img img{max-height:24vh}.pv-body h2{font-size:1.75rem}}
+html{scrollbar-gutter:stable}
