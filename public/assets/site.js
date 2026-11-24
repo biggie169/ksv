@@ -23,6 +23,10 @@ const store = {
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
 };
 
+/* ---------- real scrollbar width, so edge-to-edge rows line up with the page gutter ---------- */
+const setSbw = () => document.documentElement.style.setProperty("--sbw", (innerWidth - Math.min(document.documentElement.clientWidth, document.body.clientWidth)) + "px");
+setSbw(); addEventListener("resize", setSbw); addEventListener("load", setSbw);
+
 /* ---------- page entrance ---------- */
 $("main").classList.add("page-enter");
 
